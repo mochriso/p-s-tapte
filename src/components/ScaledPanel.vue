@@ -1,15 +1,12 @@
 <template lang="html">
-<main-slider></main-slider>
+
 </template>
 
 <script>
-import MainSlider from './MainSlider';
-
 export default {
   mixins: [],
-  name: '',
-  props: [],
-  components: { MainSlider },
+  name: 'scaled-panel',
+  props: ['panel', 'panelnr', 'name', 'type', 'effect', 'overlay'],
   data() {
     return {
 

@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
     <home></home>
   </div>
 </template>
@@ -17,12 +16,31 @@ export default {
 </script>
 
 <style>
+body {
+width: 100%;
+ background: #f2f2f2;
+ font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+ font-size: 16px;
+ color: black;
+ margin: 0;
+ padding: 0;
+/* overflow:hidden;*/
+ overflow: auto;
+ -webkit-overflow-scrolling: touch;
+}
+
+html, body, #app{
+   position: relative;
+   height: 100%;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 100%;
+
 }
 </style>

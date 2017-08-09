@@ -51,5 +51,8 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'prefer-arrow-callback': 'off',
     'no-useless-concat': 'off',
+    'global-require': 'off',
+    'import/no-dynamic-require': 'off',
+
   }
 }
