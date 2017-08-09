@@ -63,6 +63,9 @@ export default {
         border-width: 2px;
         border-color: #333333;
         position:relative;
+
+        display: flex;
+
         .paneltitle {
           position: absolute;
           right:0;
@@ -78,12 +81,12 @@ export default {
 
           }
         }
-          img {
-            // width:100%;
-            //height: inherit;
-            padding: 0;
-            margin:0;
-          }
+          // img {
+          //   // width:100%;
+          //   //height: inherit;
+          //   padding: 0;
+          //   margin:0;
+          // }
      }
        .panel + .panel {
          margin-left: 3%;
