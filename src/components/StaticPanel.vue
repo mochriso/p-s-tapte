@@ -1,5 +1,7 @@
 <template lang="html">
-  <img class="panel" :class="panel.name" :style="{'flex-grow': panel.grow, 'object-fit': 'cover', 'object-position': panel.position }" :src="panelBgArt" :alt="panel.name">
+  <div class="panel static" :style="{ 'flex-grow': panel.grow }">
+    <img :class="panel.name" :style="{ 'object-position': panel.position }" :src="panelBgArt" :alt="panel.name">
+  </div>
 </template>
 
 <script>
@@ -23,6 +25,7 @@ export default {
 
   },
   created() {
+    // getPanelSize
 
   },
   mounted() {
@@ -32,5 +35,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.static {
+  img {
+    min-width: 0%;
+    min-height: 0%;
+    flex: 1 1 0;
+    align-items: stretch;
+    object-fit: cover;
+  }
+}
+
 
 </style>

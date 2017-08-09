@@ -63,6 +63,9 @@ export default {
         border-width: 2px;
         border-color: #333333;
         position:relative;
+
+         display: flex;
+
         .paneltitle {
           position: absolute;
           right:0;

@@ -17,7 +17,6 @@ export default {
 
 <style>
 body {
-width: 100%;
  background: #f2f2f2;
  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
  font-size: 16px;
@@ -31,7 +30,8 @@ width: 100%;
 
 html, body, #app{
    position: relative;
-   height: 100%;
+   width: 100vw;
+   height: 100vh;
 }
 
 #app {
@@ -40,7 +40,5 @@ html, body, #app{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  width: 100%;
-
 }
 </style>
