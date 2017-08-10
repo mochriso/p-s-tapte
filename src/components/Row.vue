@@ -65,6 +65,8 @@ export default {
         position:relative;
 
          display: flex;
+         align-items: stretch;
+      //  flex-direction: column;
 
         .paneltitle {
           position: absolute;
@@ -81,12 +83,12 @@ export default {
 
           }
         }
-          img {
-            // width:100%;
-            //height: inherit;
-            padding: 0;
-            margin:0;
-          }
+          // img {
+          //   // width:100%;
+          //   //height: inherit;
+          //   padding: 0;
+          //   margin:0;
+          // }
      }
        .panel + .panel {
          margin-left: 3%;
