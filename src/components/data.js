@@ -12,7 +12,7 @@ export default {
                   rows: [
                     { grow: 2,
                       panels: [
-                      { name: 't01-p01', type: 'animated', effect: 'rotate', visible: true, position: '-32%, -30%', size: '212%' },
+                      { name: 't01-p01', type: 'animated', effect: 'rotate', visible: true, position: '32% 30%', size: '212%' },
                     ] },
                     { panels: [
                       { name: 't01-p02', type: 'static', position: 'left top' },

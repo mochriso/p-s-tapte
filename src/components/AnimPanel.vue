@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="panel animated" :class="panel.name">
-    <img :class="panel.effect" :style="{ 'min-width': panel.size, 'min-height': panel.size }" :src="panelBgArt" :alt="panel.name">
+    <img :class="panel.effect" :style="{ 'min-width': panel.size }" :src="panelBgArt" :alt="panel.name">
   </div>
 
 </template>
@@ -9,6 +9,7 @@
 // :class="panel.effect"
 // 'transform': 'translate('+panel.position+')',
 // :style="{ 'min-width': panel.size, 'min-height': panel.size }"
+// 'object-position': panel.position
 import panelBgArt from './mixins';
 
 export default {
@@ -38,9 +39,12 @@ export default {
 <style scoped lang="scss">
 .animated {
   img {
-    flex: 1 1 0;
-    align-items: stretch;
-    // object-fit: cover;
+    flex: 1 1 auto;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    margin: auto;
+  //  object-fit: cover;
 
   //  align-items: stretch;
   }
@@ -54,8 +58,10 @@ export default {
   }
 
   @keyframes rotate {
-    from { transform: translate(-32%, -30%) rotate(0deg) ;}
-      to { transform: translate(-32%, -30%) rotate(360deg) ;}
+    from { transform: translate(-32%, -30%)  rotate(0deg); }
+      to { transform: translate(-32%, -30%)  rotate(360deg); }
+      // transform: translate(-32%, -30%)
+      // scale(212%)
   }
 
 }
