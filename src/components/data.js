@@ -7,8 +7,7 @@ export default {
           scenes: [
             { title: 'pa do',
               tiers: [
-                { name: 't01',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { grow: 2,
                       panels: [
@@ -19,8 +18,7 @@ export default {
                     ] },
                   ],
                 },
-                { name: 't02',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't02-p01', type: 'static', position: 'left top' }, { name: 't02-p02', type: 'static', position: 'right top' },
@@ -33,8 +31,7 @@ export default {
                     ] },
                   ], // rows #2
                   }, // tier # 2
-                  { name: 't03',
-                    type: 'static',
+                  { type: 'static',
                     rows: [
                       { panels: [
                         { name: 't03-p01', type: 'static', position: 'center top' },
@@ -51,8 +48,7 @@ export default {
               }, // scene
             { title: 'i arkivet',
               tiers: [
-                { name: 't04',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't04-p01', type: 'static', position: 'center top' },
@@ -66,8 +62,7 @@ export default {
 
                   ],
                 },
-                { name: 't05',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't05-p01', type: 'static', position: 'right top' },
@@ -84,8 +79,7 @@ export default {
             },
             { title: 'jakten',
               tiers: [
-                { name: 't06',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't06-p01', type: 'static', position: 'center bottom' },
@@ -98,8 +92,7 @@ export default {
                     ] },
                   ],
                 },
-                { name: 't07',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't07-p01', type: 'static', position: 'right top', grow: 1.35 }, { name: 't07-p02', type: 'static', position: 'center top' },
@@ -112,62 +105,25 @@ export default {
                     ] },
                   ],
                 },
-                { name: 't08',
-                  type: 'interactive',
-                  animation: 't08',
-                  subtiers: [
-                    { rows: [
-                        { panels: [
-                          { name: 't08-p01', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p02', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p03', type: 'static', position: 'center bottom' },
-                        ] },
-                      ],
-                    },
-                    { rows: [
-                        { panels: [
-                          { name: 't08-p04', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p02', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p03', type: 'static', position: 'center bottom' },
-                        ] },
-                      ],
-                    },
-                    { rows: [
-                        { panels: [
-                          { name: 't08-p04', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p05', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p03', type: 'static', position: 'center bottom' },
-                        ] },
-                      ],
-                    },
-                    { rows: [
-                        { panels: [
-                          { name: 't08-p04', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p05', type: 'static', position: 'center bottom' },
-                        ] },
-                        { panels: [
-                          { name: 't08-p06', type: 'static', position: 'center bottom' },
-                        ] },
-                      ],
-                    },
+                { type: 'interactive',
+                  interactions: [
+                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'setTranslate' },
+                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'setTranslate' },
+                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'setTranslate' },
+                  ],
+                  rows: [
+                    { panels: [
+                      { name: 't08-p01', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', transform: 'translateX', animDirection: 'normal' } },
+                    ] },
+                    { panels: [
+                      { name: 't08-p02', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', transform: 'translateX', animDirection: 'opposite' } },
+                    ] },
+                    { panels: [
+                      { name: 't08-p03', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', transform: 'translateX', animDirection: 'normal' } },
+                    ] },
                   ],
                 },
-                { name: 't09',
-                  type: 'static',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't09-p01', type: 'static', position: 'center top' },
@@ -180,42 +136,21 @@ export default {
                     ] },
                   ],
                 },
-                { name: 't10',
-                  type: 'interactive',
-                  animation: 't10',
-                  subtiers: [
-                    { rows: [
-                      { panels: [
-                        { name: 't10-p01', type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
-                      ] },
-                      { panels: [
-                        { name: 't10-p02', type: 'static', position: 'center top' },
-                      ] },
-                      ],
-                    },
-                    { rows: [
-                      { panels: [
-                        { name: 't10-p01', type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
-                      ] },
-                      { panels: [
-                        { name: 't10-p03', type: 'static', position: 'center top' },
-                      ] },
-                      ],
-                    },
-                    { rows: [
-                      { panels: [
-                        { name: 't10-a04', type: 'static', position: 'center top' },
-                      ] },
-                      ],
-                    },
-                  ],
+                { type: 'interactive',
+                  rows: [
+                    { panels: [
+                      { name: 't10-p01', type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
+                    ] },
+                    { panels: [
+                      { name: 't10-p02', type: 'static', position: 'center top' },
+                    ] },
+                    ],
                 },
               ],
             },
             { title: 'forhoret',
               tiers: [
-                { name: 't11',
-                  type: 'static',
+                { type: 'interactive',
                   rows: [
                     { panels: [
                       { name: 't11-p01', type: 'static', position: 'center top' },
@@ -228,8 +163,7 @@ export default {
                     ] },
                   ],
                 },
-                { name: 't12',
-                  type: 'static',
+                { type: 'interactive',
                   rows: [
                     { panels: [
                       { name: 't12-p01', type: 'static', position: 'center bottom' },
