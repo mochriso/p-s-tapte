@@ -113,13 +113,13 @@ export default {
                   ],
                   rows: [
                     { panels: [
-                      { name: 't08-p01', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', transform: 'translateX', animDirection: 'normal' } },
+                      { name: 't08-p01', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', assetFormat: '.png', transform: 'translateX', animDirection: 'normal' } },
                     ] },
                     { panels: [
-                      { name: 't08-p02', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', transform: 'translateX', animDirection: 'opposite' } },
+                      { name: 't08-p02', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', assetFormat: '.png', transform: 'translateX', animDirection: 'opposite' } },
                     ] },
                     { panels: [
-                      { name: 't08-p03', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', transform: 'translateX', animDirection: 'normal' } },
+                      { name: 't08-p03', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', assetFormat: '.png', transform: 'translateX', animDirection: 'normal' } },
                     ] },
                   ],
                 },

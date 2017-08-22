@@ -1,12 +1,16 @@
 <template lang="html">
-
+<div class="">
+  <img :src="animAssetArt" alt="">
+</div>
 </template>
 
 <script>
+import animAssetArt from './mixins';
+
 export default {
-  mixins: [],
-  name: 'interaction',
-  props: ['gesture', 'animContext', 'translateBind'],
+  mixins: [animAssetArt],
+  name: 'interaction-item',
+  props: ['animAsset', 'transform', 'animDirection', 'assetFormat'],
   data() {
     return {
 

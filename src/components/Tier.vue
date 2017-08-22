@@ -3,19 +3,17 @@
     <slot>
     </slot>
     <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
-<<<<<<< HEAD
+      <template v-if="item.interaction">
+        <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :assetFormat="item.interaction.assetFormat" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection">
+        </interaction-item>
+      </template>
       <template v-for="item in item.panels">
-        <panel :key="item.id" :panel="item"></panel>
-=======
-      <template v-for="item in item.panels" v-if="item.type==='static'">
-        <static-panel :key="item.id" :panel="item" ></static-panel>
-      </template>
-      <template v-else-if="item.type==='animated'">
-        <anim-panel :key="item.id" :panel="item"></anim-panel>
-      </template>
-      <template v-else-if="item.type==='scaled'">
-        <scaled-panel :key="item.id" :panel="item"></scaled-panel>
->>>>>>> master
+        <panel :key="item.id" :panel="item" :type="item.type">
+          <template v-if="item.interaction">
+            <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :assetFormat="item.interaction.assetFormat" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection" >
+            </interaction-item>
+          </template>
+        </panel>
       </template>
     </row>
   </div>
@@ -28,15 +26,17 @@ import Row from './Row';
 
 import Panel from './Panel';
 
+import InteractionItem from './InteractionItem';
+
 import addZero from './mixins';
 
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['tierIndex', 'type', 'rows', 'tiernr', 'activeIndex'],
+  props: ['tierIndex', 'type', 'rows', 'tiernr', 'activeIndex', 'interactions'],
   data() {
     return {
-      
+      showInt: true,
     };
   },
   computed: {
@@ -71,7 +71,7 @@ export default {
   //  this.tierIndex(ind);
 // console.log(this.index);
   },
-  components: { Panel, Row },
+  components: { Panel, Row, InteractionItem },
 };
 </script>
 

@@ -5,10 +5,10 @@
       <template v-if="item.type === 'interactive'">
         <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
           <swiper-slide class="slide-interactive">
-            <tier :key="item.id" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :tiernr="addZero(index+1)">
+            <tier :key="item.id" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :interactions="item.interactions" :tiernr="addZero(index+1)">
               <template v-for="item in item.interactions">
-              <interaction v-show="showInt" :key="item.id" :gesture="item.gesture" :animContext="item.animContext" :translateBind="item.translateBind"></interaction>
-            </template>
+                <interaction :key="item.id" :gesture="item.gesture" :animContext="item.animContext" :translateBind="item.translateBind"></interaction>
+              </template>
             </tier>
           </swiper-slide>
         </swiper>

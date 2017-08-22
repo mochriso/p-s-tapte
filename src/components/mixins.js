@@ -21,5 +21,9 @@ export default {
     panelBgArt() {
       return require('../assets/images/' + this.panel.name + '.jpg');
     },
+    animAssetArt() {
+      return require('../assets/images/' + this.animAsset + this.assetFormat);
+    },
+
   },
  };
