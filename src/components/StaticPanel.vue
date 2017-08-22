@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="panel static" :style="{ 'flex-grow': panel.grow }">
+  <div class="panel" :class="[panel.name, panel.type]" :style="{ 'flex-grow': panel.grow }">
     <img :class="panel.name" :style="{ 'object-position': panel.position }" :src="panelBgArt" :alt="panel.name">
   </div>
 </template>

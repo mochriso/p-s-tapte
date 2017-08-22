@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="panel animated" :class="panel.name">
-    <img :class="panel.effect" :style="{ 'min-width': panel.size }" :src="panelBgArt" :alt="panel.name">
+  <div class="panel" :class="[panel.name, panel.type]" :style="(panel.type + 'Wrap')">
+    <img :class="panel.effect" :style="(panel.type + 'Img')" :src="panelBgArt" :alt="panel.name">
   </div>
 
 </template>
@@ -14,10 +14,21 @@ import panelBgArt from './mixins';
 
 export default {
   mixins: [panelBgArt],
-  name: 'anim-panel',
+  name: 'panel',
   props: ['panel', 'panelnr', 'name', 'type', 'effect', 'overlay'],
   data() {
     return {
+      animatedImg: {
+         'min-width': panel.size,
+      },
+      animatedWrap: {
+      },
+      staticImg: {
+         'object-position': panel.position,
+      },
+      staticWrap: {
+         'flex-grow': panel.grow,
+      },
 
     };
   },
@@ -37,6 +48,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.static {
+  img {
+    min-width: 0%;
+    min-height: 0%;
+    flex: 1 1 0;
+    align-items: stretch;
+    object-fit: cover;
+  }
+}
 .animated {
   img {
     flex: 1 1 auto;
