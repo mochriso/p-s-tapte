@@ -3,13 +3,21 @@
     <slot>
     </slot>
     <row>
-    
+
     </row>
 
   </div>
 </template>
 
 <script>
+  // data for tier 10
+  // { rows: [
+  //   { panels: [
+  //     { name: 't10-a04', type: 'static', position: 'center top' },
+  //   ] },
+  //   ],
+  // },
+
 import Row from './Row';
 
 import StaticPanel from './StaticPanel';

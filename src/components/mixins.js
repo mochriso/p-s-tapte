@@ -1,25 +1,25 @@
 export default {
-  computed: {
-    panelBgArt() {
-      return require('../assets/images/' + this.panel.name + '.jpg');
-    },
-  },
   methods: {
   // Boolean Comparing two arguments
-    same: function same(ind, acInd) {
+    same(ind, acInd) {
       if (ind === acInd) {
         return true;
       }
         return false;
     },
-    iterate: function iterate(arr, callback) {
+    iterate(arr, action) {
       let i;
       for (i = 0; i < arr.length; i += 1) {
-          return callback;
+           action(arr[i]);
         }
       },
       addZero(number) {
         return (number < 10) ? '0' + number.toString() : number.toString();
       },
   },
-};
+  computed: {
+    panelBgArt() {
+      return require('../assets/images/' + this.panel.name + '.jpg');
+    },
+  },
+ };

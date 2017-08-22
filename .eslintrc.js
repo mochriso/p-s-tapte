@@ -53,6 +53,9 @@ module.exports = {
     'no-useless-concat': 'off',
     'global-require': 'off',
     'import/no-dynamic-require': 'off',
+    'import/no-duplicates': 'off',
+    'arrow-body-style': 'off',
+    'no-prototype-builtins': 'off',
 
   }
 }
