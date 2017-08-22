@@ -1,5 +1,5 @@
 <template lang="html">
-  <div :style="{ 'flex-grow': row.grow }" class="row" :class="'row'+rownr">
+  <div :style="{ 'flex-grow': row.grow }" :class="['row', rownr]">
     <slot>
     </slot>
   </div>
