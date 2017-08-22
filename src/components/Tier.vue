@@ -3,14 +3,8 @@
     <slot>
     </slot>
     <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
-      <template v-for="item in item.panels" v-if="item.type==='static'">
-        <static-panel :key="item.id" :panel="item"></static-panel>
-      </template>
-      <template v-else-if="item.type==='animated'">
-        <anim-panel :key="item.id" :panel="item"></anim-panel>
-      </template>
-      <template v-else-if="item.type==='scaled'">
-        <scaled-panel :key="item.id" :panel="item"></scaled-panel>
+      <template v-for="item in item.panels">
+        <panel :key="item.id" :panel="item"></panel>
       </template>
     </row>
   </div>
@@ -19,11 +13,7 @@
 <script>
 import Row from './Row';
 
-import ScaledPanel from './ScaledPanel';
-
-import StaticPanel from './StaticPanel';
-
-import AnimPanel from './AnimPanel';
+import Panel from './Panel';
 
 import addZero from './mixins';
 
@@ -33,7 +23,7 @@ export default {
   props: ['name', 'type', 'rows', 'tiernr'],
   data() {
     return {
-
+      
     };
   },
   computed: {
@@ -48,7 +38,7 @@ export default {
   mounted() {
 
   },
-  components: { AnimPanel, StaticPanel, ScaledPanel, Row },
+  components: { Panel, Row },
 };
 </script>
 
