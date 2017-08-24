@@ -22,7 +22,7 @@ export default {
       return require('../assets/images/' + this.panel.name + '.jpg');
     },
     animAssetArt() {
-      return require('../assets/images/' + this.animAsset + this.assetFormat);
+      return require('../assets/images/' + this.animAsset);
     },
 
   },

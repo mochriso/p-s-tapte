@@ -107,19 +107,19 @@ export default {
                 },
                 { type: 'interactive',
                   interactions: [
-                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'setTranslate' },
-                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'setTranslate' },
-                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'setTranslate' },
+                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'onProgress' },
+                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'onSetTranslate' },
+                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'onSetTranslate' },
                   ],
                   rows: [
                     { panels: [
-                      { name: 't08-p01', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', assetFormat: '.png', transform: 'translateX', animDirection: 'normal' } },
+                      { name: 't08-p01', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int.png', transform: 'translateX', animDirection: 'normal' } },
                     ] },
                     { panels: [
-                      { name: 't08-p02', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', assetFormat: '.png', transform: 'translateX', animDirection: 'opposite' } },
+                      { name: 't08-p02', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int.png', transform: 'translateX', animDirection: 'opposite' } },
                     ] },
                     { panels: [
-                      { name: 't08-p03', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int', assetFormat: '.png', transform: 'translateX', animDirection: 'normal' } },
+                      { name: 't08-p03', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int.png', transform: 'translateX', animDirection: 'normal' } },
                     ] },
                   ],
                 },
@@ -136,7 +136,7 @@ export default {
                     ] },
                   ],
                 },
-                { type: 'interactive',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't10-p01', type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
@@ -150,7 +150,7 @@ export default {
             },
             { title: 'forhoret',
               tiers: [
-                { type: 'interactive',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't11-p01', type: 'static', position: 'center top' },
@@ -163,7 +163,7 @@ export default {
                     ] },
                   ],
                 },
-                { type: 'interactive',
+                { type: 'static',
                   rows: [
                     { panels: [
                       { name: 't12-p01', type: 'static', position: 'center bottom' },

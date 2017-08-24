@@ -4,13 +4,13 @@
     </slot>
     <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
       <template v-if="item.interaction">
-        <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :assetFormat="item.interaction.assetFormat" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection">
+        <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection">
         </interaction-item>
       </template>
       <template v-for="item in item.panels">
         <panel :key="item.id" :panel="item" :type="item.type">
           <template v-if="item.interaction">
-            <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :assetFormat="item.interaction.assetFormat" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection" >
+            <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection" >
             </interaction-item>
           </template>
         </panel>
