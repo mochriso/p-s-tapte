@@ -1,6 +1,7 @@
 <template lang="html">
-  <div class="panel" :class="[panel.name, panel.type]" :style="(panel.type + 'Wrap')">
-    <img :class="panel.effect" :style="(panel.type + 'Img')" :src="panelBgArt" :alt="panel.name">
+  <div class="panel" :class="[panel.name, panel.type]" :style="styler('wrap')">
+    <slot></slot>
+    <img :class="panel.effect" :style="styler('img')" :src="panelBgArt" :alt="panel.name">
   </div>
 
 </template>
@@ -18,24 +19,36 @@ export default {
   props: ['panel', 'panelnr', 'name', 'type', 'effect', 'overlay'],
   data() {
     return {
-      animatedImg: {
-         'min-width': panel.size,
-      },
-      animatedWrap: {
-      },
-      staticImg: {
-         'object-position': panel.position,
-      },
-      staticWrap: {
-         'flex-grow': panel.grow,
-      },
-
+      styles: [
+        {
+          animated: {
+            img: { 'min-width': this.panel.size },
+            wrap: { '': '' },
+          },
+        },
+        {
+          static: {
+            img: { 'object-position': this.panel.position },
+            wrap: { 'flex-grow': this.panel.grow },
+          },
+        },
+      ],
     };
   },
   computed: {
 
   },
   methods: {
+    styler(part) {
+      const returnArr = [];
+      this.styles.forEach((obj) => {
+        const objType = Object.keys(obj)[0];
+         if (this.type === objType) {
+           returnArr.push(obj[objType][part]);
+         }
+     });
+     return returnArr[0];
+    },
 
   },
   created() {
