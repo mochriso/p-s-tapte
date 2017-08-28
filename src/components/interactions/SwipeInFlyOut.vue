@@ -1,12 +1,15 @@
 <template lang="html">
-
+<div class="">
+  <slot>
+  </slot>
+</div>
 </template>
 
 <script>
 export default {
   mixins: [],
-  name: '',
-  props: [''],
+  name: 'swipeInFlyOut',
+  props: ['animation'],
   components: { },
   data() {
     return {

@@ -106,20 +106,60 @@ export default {
                   ],
                 },
                 { type: 'interactive',
-                  interactions: [
-                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'onProgress' },
-                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'onSetTranslate' },
-                    { gesture: 'swipeFwd', animContext: 'panel', translateBind: 'onSetTranslate' },
-                  ],
                   rows: [
                     { panels: [
-                      { name: 't08-p01', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int.png', transform: 'translateX', animDirection: 'normal' } },
+                      { name: 't08-p01',
+                        type: 'static',
+                        position: 'center bottom',
+                        interaction: {
+                          gesture: 'swipe',
+                          animationContext: 'panel',
+                          animation: {
+                            behaviour: 'swipeInFlyOut',
+                            axis: 'X',
+                            direction: 'opposite',
+                          },
+                          interactionItem: {
+                            animAsset: 't08-int.png',
+                          },
+                        },
+                      },
                     ] },
                     { panels: [
-                      { name: 't08-p02', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int.png', transform: 'translateX', animDirection: 'opposite' } },
+                      { name: 't08-p02',
+                        type: 'static',
+                        position: 'center bottom',
+                        interaction: {
+                          gesture: 'swipe',
+                          animationContext: 'panel',
+                          animation: {
+                            behaviour: 'swipeInFlyOut',
+                            axis: 'X',
+                            direction: 'opposite',
+                          },
+                          interactionItem: {
+                            animAsset: 't08-int.png',
+                          },
+                        },
+                      },
                     ] },
                     { panels: [
-                      { name: 't08-p03', type: 'static', position: 'center bottom', interaction: { animAsset: 't08-int.png', transform: 'translateX', animDirection: 'normal' } },
+                      { name: 't08-p03',
+                        type: 'static',
+                        position: 'center bottom',
+                        interaction: {
+                          gesture: 'swipe',
+                          animationContext: 'panel',
+                          animation: {
+                            behaviour: 'swipeInFlyOut',
+                            axis: 'X',
+                            direction: 'opposite',
+                          },
+                          interactionItem: {
+                            animAsset: 't08-int.png',
+                          },
+                        },
+                      },
                     ] },
                   ],
                 },
@@ -136,13 +176,29 @@ export default {
                     ] },
                   ],
                 },
-                { type: 'static',
+                { type: 'interactive',
                   rows: [
                     { panels: [
                       { name: 't10-p01', type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
                     ] },
                     { panels: [
-                      { name: 't10-p02', type: 'static', position: 'center top' },
+                      {
+                        name: 't10-p02',
+                        type: 'static',
+                        position: 'center top',
+                        interaction: {
+                          gesture: 'swipe',
+                          animationContext: 'panel',
+                          animation: {
+                            behaviour: 'swipeInFlyOut',
+                            axis: 'X',
+                            direction: 'opposite',
+                          },
+                          interactionItem: {
+                            animAsset: 't08-int.png',
+                          },
+                        }, 
+                      },
                     ] },
                     ],
                 },

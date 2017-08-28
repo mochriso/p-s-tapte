@@ -1,31 +1,34 @@
-<template lang="html">
-
-</template>
-
 <script>
+import SwipeInFlyOut from './interactions/SwipeInFlyOut';
+
 export default {
-  mixins: [],
   name: 'interaction',
-  props: ['gesture', 'animContext', 'translateBind'],
-  data() {
-    return {
-
-    };
+  components: {
+    SwipeInFlyOut,
   },
-  computed: {
-
+  props: {
+    type: {
+      type: String,
+      required: true,
+    },
+    animation: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  methods: {
-
+  render(createElement) {
+    // const { props: attrs } = this;
+    console.log(this);
+    return createElement(this.type, {
+      props: {
+        animation: this.animation,
+      },
+      class: {
+          foo: true,
+        },
+    },
+      this.$slots.default);
   },
-  created() {
 
-  },
-  mounted() {
-
-  },
 };
 </script>
-
-<style lang="scss">
-</style>
