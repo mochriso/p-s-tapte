@@ -1,5 +1,5 @@
 <template lang="html">
-<div class="interaction-item" :style="intValues">
+<div class="interaction-item">
   <img :src="animAssetArt" alt="">
 </div>
 </template>
@@ -31,12 +31,7 @@ export default {
     };
   },
   computed: {
-    intValues() {
-        const val = 'translateX' + '(' + this.interactivity.translateVal + 'px)';
-        const obj = {};
-        obj.transform = val;
-        console.log(obj);
-        return (obj);
+
 
       // set: () => {
       //   const val = this.transform + '(' + this.translateVal + 'px)';
@@ -49,7 +44,6 @@ export default {
       // obj[transform] = this.transform + '(' + this.translate + 'px)';
       // console.log(obj);
       // return (obj);
-    },
 
   },
   methods: {

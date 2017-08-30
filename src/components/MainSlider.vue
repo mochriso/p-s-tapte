@@ -3,10 +3,10 @@
   <swiper :options="mainSliderOption" ref="mainSlider" class="main-slider" v-for="(item,index) in story" key="item.id">
     <swiper-slide class="slide-main" v-for="(item,index) in tierArray" key="item.id">
       <template v-if="item.type === 'interactive'">
-        <interactive-tier :tierArray="tierArray" :key="item.id">
+        <interactive-tier :tierIndex="index" :activeIndex="activeIndex" :key="item.id">
         </interactive-tier>
       </template>
-        <tier :key="item.id" :self="item" :index="index" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :tiernr="addZero(index+1)">
+        <tier :key="item.id" :tier="item" :tierIndex="index" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :intTierArray="intTierArray" :tiernr="addZero(index+1)">
         </tier>
       </swiper-slide>
   </swiper>
@@ -179,7 +179,7 @@ export default {
       }
       else {
         self.setActiveIndex();
-        Eventbus.$emit('the-active-tier-type', self.activeType, self.activeIndex);
+        Eventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
         console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:', self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
         clearRepeatedCheck();
       }
@@ -196,7 +196,7 @@ export default {
 
 // TOGGLE MAINSLIDER LOCK ON SPECIAL INTERACTIVITY
 
-    Eventbus.$on('the-active-tier-type', (tierType, tierIndex) => {
+    Eventbus.$on('the-active-tier', (tierType, tierIndex) => {
       console.log(tierType, tierIndex);
        if (tierType === 'interactive') {
           this.mainSwiper.lockSwipes();

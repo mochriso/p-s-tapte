@@ -1,8 +1,8 @@
 <template lang="html">
-  <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
-    <swiper-slide class="slide-interactive">
-    </swiper-slide>
-  </swiper>
+    <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
+      <swiper-slide class="slide-interactive">
+      </swiper-slide>
+    </swiper>
 </template>
 
 <script>
@@ -17,7 +17,7 @@ import iterate from './mixins';
 export default {
   mixins: [addZero, iterate, same],
   name: 'interactive-tier',
-  props: ['tierIndex', 'activeIndex', 'type', 'rows', 'tiernr', 'interactions', 'tierArray'],
+  props: ['tierIndex', 'activeIndex'],
   components: { },
   data() {
     return {
@@ -36,30 +36,30 @@ export default {
   },
   computed: {
     // returns array of the INDEXES of all interactive tiers
-    interactiveIndArr() {
-       const tArr = this.tierArray;
-       const allInteractives = [];
-         let i;
-         for (i = 0; i < tArr.length; i += 1) {
-           if (tArr[i].type === 'interactive') {
-             allInteractives.push(tArr.indexOf(tArr[i]));
-           }
-         }
-        return allInteractives;
-    },
+    // interactiveIndArr() {
+    //    const tArr = this.tierArray;
+    //    const allInteractives = [];
+    //      let i;
+    //      for (i = 0; i < tArr.length; i += 1) {
+    //        if (tArr[i].type === 'interactive') {
+    //          allInteractives.push(tArr.indexOf(tArr[i]));
+    //        }
+    //      }
+    //     return allInteractives;
+    // },
     // returns an OBJECT with all interactive tier indexes as numeric keys
     // and their respective sub-sliders' swiper objects as values
-    intSwipersObject() {
-        const values = this.$refs.interactiveSlider;
-        const keys = this.interactiveIndArr;
-         const intObj = [];
-         const obj = {};
-         for (let i = 0; i < values.length; i += 1) {
-              obj[keys[i]] = values[i];
-              }
-         intObj.push(obj);
-         return intObj[0];
-    },
+    // intSwipersObject() {
+    //     const values = this.$refs.interactiveSlider;
+    //     const keys = this.interactiveIndArr;
+    //      const intObj = [];
+    //      const obj = {};
+    //      for (let i = 0; i < values.length; i += 1) {
+    //           obj[keys[i]] = values[i];
+    //           }
+    //      intObj.push(obj);
+    //      return intObj[0];
+    // },
     // returns an ARRAY with all interactive sub-slider swiper objects
     intSwiper() {
       return this.$refs.interactiveSlider.swiper;
@@ -72,38 +72,35 @@ export default {
 
   },
   mounted() {
-    console.log(this.$refs.interactiveSlider.swiper);
-    const intSwipersObj = this.intSwipersObject;
-    const interactions = this.interactions;
-  //  console.log(interactions);
-    //   NO MORE NEED:: SET TIMEOUT IN ORDER TO INCLUDE ALL REF'ED INTERACTIVE SWIPER OBJECTS
-    //   (BECAUSE ONLY THE FIRST IS READY ON MOUNTED),
-    //   THEN MAKE ALL READY FOR INTERACTION:
-
-        const theSwipa = this.intSwiper;
-    //  APPEND AN EMPTY SLIDE IN ORDER TO PROPERLY USE PROGRESS/ SETTRANSLATE VALUES
-        theSwipa.appendSlide('<div class="slide-interactive swiper-slide"></div>');
+    console.log('tierIndex', this.tierIndex);
+    const theSwipa = this.intSwiper;
+//  APPEND AN EMPTY SLIDE IN ORDER TO PROPERLY USE PROGRESS/ SETTRANSLATE VALUES
+    theSwipa.appendSlide('<div class="slide-interactive swiper-slide"></div>');
 
     //   REWIND SWIPER TO START IF END IS REACHED
     //   (END BEING THE APPENDED SLIDE)
     //   UPDATE SWIPER AND PROGRESS
-        theSwipa.on('onReachEnd', (swiper) => {
-           swiper.slideTo(0, 0, false);
-           swiper.update(true);
-           swiper.updateProgress();
-        });
+    theSwipa.on('onReachEnd', (swiper) => {
+       swiper.slideTo(0, 0, false);
+       swiper.update(true);
+       swiper.updateProgress();
+    });
+    // EMIT TIER INDEX
 
-    // CREATE AND COLLECT TRANSLATE-EMIT FUNCTIONS
-      //  const trBindFuncs = [];
-          theSwipa.on('setTranslate', (swiper, translate) => {
-            Eventbus.$emit('int-translate', translate);
-          });
-          theSwipa.on('setTransition', (swiper, transition) => {
-            Eventbus.$emit('int-transition', transition);
-          });
-          theSwipa.on('progress', (swiper, progress) => {
-            Eventbus.$emit('int-progress', progress);
-          });
+    // EMIT TOUCH EVENTS
+    theSwipa.on('setTranslate', (swiper, translate) => {
+        Eventbus.$emit('int-translate', translate, this.tierIndex);
+        console.log('emitting', translate, this.tierIndex);
+    });
+    theSwipa.on('setTransition', (swiper, transition) => {
+        Eventbus.$emit('int-transition', transition, this.tierIndex);
+    });
+    theSwipa.on('progress', (swiper, progress) => {
+        Eventbus.$emit('int-progress', progress, this.tierIndex);
+    });
+    theSwipa.on('touchEvent', (swiper, event) => {
+        Eventbus.$emit('int-touchStart', event, this.tierIndex);
+    });
       //  trBindFuncs.push(onSetTranslate, onSetTransition, onProgress);
 
     // CALLBACKS

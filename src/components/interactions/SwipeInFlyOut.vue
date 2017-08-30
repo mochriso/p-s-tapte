@@ -1,5 +1,5 @@
 <template lang="html">
-<div class="">
+<div class="" :style="intValues">
   <slot>
   </slot>
 </div>
@@ -8,8 +8,8 @@
 <script>
 export default {
   mixins: [],
-  name: 'swipeInFlyOut',
-  props: ['animation', 'interactionIndex', 'eventVals'],
+  name: 'swipe-in-fly-out',
+  props: ['animation', 'interactionIndex', 'eventVals', 'nextInteraction'],
   components: { },
   data() {
     return {
@@ -17,7 +17,13 @@ export default {
     };
   },
   computed: {
-
+    intValues() {
+        const val = 'translateX' + '(' + this.eventVals.translateVal + 'px)';
+        const obj = {};
+        obj.transform = val;
+      //  console.log(obj);
+        return (obj);
+    },
   },
   methods: {
 
@@ -31,5 +37,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+
 </style>
