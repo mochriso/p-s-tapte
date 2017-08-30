@@ -15,6 +15,14 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    eventVals: {
+      type: Object,
+      default: () => ({}),
+    },
+    interactionIndex: {
+      type: Number,
+      required: true,
+    },
   },
   render(createElement) {
     // const { props: attrs } = this;
@@ -22,6 +30,8 @@ export default {
     return createElement(this.type, {
       props: {
         animation: this.animation,
+        interactionIndex: this.interactionIndex,
+        eventVals: this.eventVals,
       },
       class: {
           foo: true,

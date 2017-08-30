@@ -15,11 +15,11 @@ export default {
   props: ['animAsset'],
   data() {
     return {
-      interactivity: {
-        translateVal: '',
-        transitionVal: '',
-        progressVal: '',
-      },
+      // interactivity: {
+      //   translateVal: '',
+      //   transitionVal: '',
+      //   progressVal: '',
+      // },
       styles: {
         wrap: {
           transitionProperty: 'transform',
@@ -56,18 +56,18 @@ export default {
 
   },
   created() {
-    Eventbus.$on('int-translate', (translate) => {
-      this.interactivity.translateVal = translate;
-      console.log('translateVals', this.interactivity.translateVal, translate);
-    });
-    Eventbus.$on('int-transition', (transition) => {
-      this.interactivity.transitionVal = transition;
-      console.log('transitionVals', this.interactivity.transitionVal, transition);
-    });
-    Eventbus.$on('int-progress', (progress) => {
-      this.interactivity.progressVal = progress;
-      console.log('progressVals', this.interactivity.progressVal, progress);
-    });
+    // Eventbus.$on('int-translate', (translate) => {
+    //   this.interactivity.translateVal = translate;
+    //   console.log('translateVals', this.interactivity.translateVal, translate);
+    // });
+    // Eventbus.$on('int-transition', (transition) => {
+    //   this.interactivity.transitionVal = transition;
+    //   console.log('transitionVals', this.interactivity.transitionVal, transition);
+    // });
+    // Eventbus.$on('int-progress', (progress) => {
+    //   this.interactivity.progressVal = progress;
+    //   console.log('progressVals', this.interactivity.progressVal, progress);
+    // });
   },
   mounted() {
   //  console.log(this.styles.wrap.transform);

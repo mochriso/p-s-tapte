@@ -9,7 +9,7 @@
 export default {
   mixins: [],
   name: 'swipeInFlyOut',
-  props: ['animation'],
+  props: ['animation', 'interactionIndex', 'eventVals'],
   components: { },
   data() {
     return {

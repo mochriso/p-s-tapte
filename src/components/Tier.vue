@@ -3,14 +3,14 @@
     <slot>
     </slot>
     <template v-if="self.interaction">
-      <interaction :type="self.interaction.animation.behaviour" :gesture="self.interaction.gesture" :animationContext="self.interaction.animationContext" :animation="self.interaction.animation" ref="interaction">
+      <interaction :type="self.interaction.animation.behaviour" :eventVals="eventVals" :animation="self.interaction.animation" :interactionIndex.sync="interactionIndex" ref="interaction">
         <interaction-item v-show="showInt" :animAsset="self.interaction.interactionItem.animAsset">
         </interaction-item>
       </interaction>
     </template>
     <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
       <template v-if="item.interaction">
-        <interaction :type="item.interaction.animation.behaviour" :gesture="item.interaction.gesture" :animationContext="item.interaction.animationContext" :animation="item.interaction.animation" ref="interaction">
+        <interaction :type="item.interaction.animation.behaviour" :eventVals="eventVals" :animation="item.interaction.animation" :interactionIndex.sync="interactionIndex" ref="interaction">
           <interaction-item v-show="showInt" :animAsset="item.interaction.interactionItem.animAsset">
           </interaction-item>
         </interaction>
@@ -18,7 +18,7 @@
       <template v-for="item in item.panels">
         <panel :key="item.id" :panel="item" :type="item.type">
           <template v-if="item.interaction">
-            <interaction :type="item.interaction.animation.behaviour" :animation="item.interaction.animation" ref="interaction">
+            <interaction :type="item.interaction.animation.behaviour" :eventVals="eventVals" :animation="item.interaction.animation" :interactionIndex.sync="interactionIndex" ref="interaction">
               <interaction-item v-show="showInt" :animAsset="item.interaction.interactionItem.animAsset">
               </interaction-item>
             </interaction>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { Eventbus } from './eventbus';
+
 // import { Eventbus } from './eventbus';
 import Interaction from './Interaction';
 
@@ -48,6 +50,12 @@ export default {
   data() {
     return {
       showInt: true,
+      interactionIndex: 0,
+      eventVals: {
+        translateVal: '',
+        transitionVal: '',
+        progressVal: '',
+      },
     };
   },
   computed: {
@@ -74,7 +82,18 @@ export default {
     // },
   },
   created() {
-
+    Eventbus.$on('int-translate', (translate) => {
+      this.eventVals.translateVal = translate;
+      console.log('translateVals', this.eventVals.translateVal, translate);
+    });
+    Eventbus.$on('int-transition', (transition) => {
+      this.eventVals.transitionVal = transition;
+      console.log('transitionVals', this.eventVals.transitionVal, transition);
+    });
+    Eventbus.$on('int-progress', (progress) => {
+      this.eventVals.progressVal = progress;
+      console.log('progressVals', this.eventVals.progressVal, progress);
+    });
   },
   mounted() {
   //  this.emitEveryType();
