@@ -111,54 +111,57 @@ export default {
                       { name: 't08-p01',
                         type: 'static',
                         position: 'center bottom',
-                        interaction: {
-                          gesture: 'swipe',
-                          animationContext: 'panel',
-                          animation: {
-                            behaviour: 'swipeInFlyOut',
-                            axis: 'X',
-                            direction: 'opposite',
+                        interactions: [
+                          { interactionIndex: 0,
+                            gesture: 'swipe',
+                            animation: {
+                              behaviour: 'swipeInFlyOut',
+                              axis: 'X',
+                              direction: 'opposite',
+                            },
+                            interactionItem: {
+                              animAsset: 't08-int.png',
+                            },
                           },
-                          interactionItem: {
-                            animAsset: 't08-int.png',
-                          },
-                        },
+                        ],
                       },
                     ] },
                     { panels: [
                       { name: 't08-p02',
                         type: 'static',
                         position: 'center bottom',
-                        interaction: {
-                          gesture: 'swipe',
-                          animationContext: 'panel',
-                          animation: {
-                            behaviour: 'swipeInFlyOut',
-                            axis: 'X',
-                            direction: 'opposite',
+                        interactions: [
+                          { interactionIndex: 1,
+                            gesture: 'swipe',
+                            animation: {
+                              behaviour: 'swipeInFlyOut',
+                              axis: 'X',
+                              direction: 'opposite',
+                            },
+                            interactionItem: {
+                              animAsset: 't08-int.png',
+                            },
                           },
-                          interactionItem: {
-                            animAsset: 't08-int.png',
-                          },
-                        },
+                        ],
                       },
                     ] },
                     { panels: [
                       { name: 't08-p03',
                         type: 'static',
                         position: 'center bottom',
-                        interaction: {
-                          gesture: 'swipe',
-                          animationContext: 'panel',
-                          animation: {
-                            behaviour: 'swipeInFlyOut',
-                            axis: 'X',
-                            direction: 'opposite',
+                        interactions: [
+                          { interactionIndex: 2,
+                            gesture: 'swipe',
+                            animation: {
+                              behaviour: 'swipeInFlyOut',
+                              axis: 'X',
+                              direction: 'opposite',
+                            },
+                            interactionItem: {
+                              animAsset: 't08-int.png',
+                            },
                           },
-                          interactionItem: {
-                            animAsset: 't08-int.png',
-                          },
-                        },
+                        ],
                       },
                     ] },
                   ],
@@ -186,18 +189,19 @@ export default {
                         name: 't10-p02',
                         type: 'static',
                         position: 'center top',
-                        interaction: {
-                          gesture: 'swipe',
-                          animationContext: 'panel',
-                          animation: {
-                            behaviour: 'swipeInFlyOut',
-                            axis: 'X',
-                            direction: 'opposite',
+                        interactions: [
+                          { interactionIndex: 0,
+                            gesture: 'swipe',
+                            animation: {
+                              behaviour: 'swipeInFlyOut',
+                              axis: 'X',
+                              direction: 'opposite',
+                            },
+                            interactionItem: {
+                              animAsset: 't08-int.png',
+                            },
                           },
-                          interactionItem: {
-                            animAsset: 't08-int.png',
-                          },
-                        }, 
+                        ],
                       },
                     ] },
                     ],
