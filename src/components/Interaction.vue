@@ -1,5 +1,5 @@
 <template lang="html">
-  <component :is="activeComponent" v-show="showInt" :nextInteraction.sync="nextInteraction" :eventVals="eventVals" :animation="this.animation" class="touch-behaviour" :class="this.type">
+  <component :is="activeComponent" v-if="nextInt" :interactionIndex="interactionIndex" :nextInteraction.sync="nextInteraction" :eventVals="eventVals" :animation="this.animation" class="touch-behaviour" :class="this.type">
     <interaction-item :animAsset="this.interactionItem.animAsset">
     </interaction-item>
   </component>
@@ -46,12 +46,17 @@ export default {
         translateVal: '',
         transitionVal: '',
         progressVal: '',
-        touchEvent: '',
+        touchStart: false,
+        touchMove: false,
+        touchEnd: false,
+        translating: false,
+        transitioning: false,
+        progressing: false,
       },
     };
   },
   computed: {
-    showInt() {
+    nextInt() {
       if (this.interactionIndex === this.nextInteraction) {
         return true;
       }
@@ -69,30 +74,52 @@ export default {
     //
     // Eventbroker('int-translate', translate, translateVal);
     console.log('local tierIndex', this.tierIndex);
-        Eventbus.$on('int-translate', (translate, tierIndex) => {
-          if (tierIndex === this.tierIndex) {
+        Eventbus.$on('int-translate', (swiper, translate, tierIndex) => {
+        //  console.log('receiving translate', translate);
+      //    if (tierIndex === this.tierIndex) {
             this.eventVals.translateVal = translate;
-            console.log('recieving translateVals', tierIndex, this.tierIndex, translate);
-          }
+            this.eventVals.translating = true;
+          //  this.eventVals.touchEvent = 'setTranslate';
+            // this.intStatus.isStarting = false;
+            // this.intStatus.isActive = true;
+            // this.intStatus.isEnding = false;
+      //   }
         });
         Eventbus.$on('int-transition', (transition, tierIndex) => {
-          if (tierIndex === this.tierIndex) {
             this.eventVals.transitionVal = transition;
-            console.log('transitionVals', this.eventVals.transitionVal, transition);
-          }
+            this.eventVals.transitioning = true;
+        });
+        // Eventbus.$on('int-transitionStart', (swiper, tierIndex) => {
+        //   if (tierIndex === this.tierIndex) {
+        //     this.eventVals.touchEvent = 'transitionStart';
+        //     // log
+        //   }
+        // });
+        Eventbus.$on('int-transitionEnd', (swiper, tierIndex) => {
+            this.eventVals.transitioning = false;
         });
         Eventbus.$on('int-progress', (progress, tierIndex) => {
-          if (tierIndex === this.tierIndex) {
+        //  console.log('receiving progress', progress);
             this.eventVals.progressVal = progress;
-            console.log('progressVals', this.eventVals.progressVal, progress);
-          }
+            this.eventVals.progressing = true;
+        //    console.log('progressVal', this.eventVals.progressVal);
         });
-        Eventbus.$on('int-touchStart', (event, tierIndex) => {
-          if (tierIndex === this.tierIndex) {
-            this.eventVals.touchEvent = event;
-            console.log('touchEvent', this.eventVals.touchEvent, event);
-          }
+        Eventbus.$on('int-touchEnd', (swiper, touchend, tierIndex) => {
+            this.eventVals.touchEnd = true;
+          //  this.eventVals.touchStart = false;
+            this.eventVals.touchMove = false;
         });
+        Eventbus.$on('int-touchStart', (touchstart, tierIndex) => {
+            this.eventVals.touchEnd = false;
+            this.eventVals.touchStart = true;
+            console.log('receiving touchStart', this.eventVals.touchStart, 'touchEnd:', this.eventVals.touchEnd);
+        });
+
+        // Eventbus.$on('int-touchMove', (swiper, touchMove, tierIndex) => {
+        //   if (tierIndex === this.tierIndex) {
+        //     this.eventVals.touchEvent = 'touchMove';
+        //   }
+        // });
   },
 
 };

@@ -24,7 +24,7 @@ export default {
       interactiveSliderOption: {
         notNextTick: true,
         nested: true,
-        virtualTranslate: true,
+    //  virtualTranslate: true,
         spaceBetween: 0,
         slidesPerView: 'auto',
         centeredSlides: false,
@@ -81,16 +81,17 @@ export default {
     //   (END BEING THE APPENDED SLIDE)
     //   UPDATE SWIPER AND PROGRESS
     theSwipa.on('onReachEnd', (swiper) => {
-       swiper.slideTo(0, 0, false);
-       swiper.update(true);
-       swiper.updateProgress();
+       // swiper.slideTo(0, 0, false);
+      //  swiper.update(true);
+      //  swiper.updateProgress();
     });
     // EMIT TIER INDEX
 
     // EMIT TOUCH EVENTS
+
     theSwipa.on('setTranslate', (swiper, translate) => {
-        Eventbus.$emit('int-translate', translate, this.tierIndex);
-        console.log('emitting', translate, this.tierIndex);
+        Eventbus.$emit('int-translate', swiper, translate, this.tierIndex);
+      //  console.log('int-translate', swiper, translate, this.tierIndex);
     });
     theSwipa.on('setTransition', (swiper, transition) => {
         Eventbus.$emit('int-transition', transition, this.tierIndex);
@@ -98,9 +99,22 @@ export default {
     theSwipa.on('progress', (swiper, progress) => {
         Eventbus.$emit('int-progress', progress, this.tierIndex);
     });
-    theSwipa.on('touchEvent', (swiper, event) => {
-        Eventbus.$emit('int-touchStart', event, this.tierIndex);
+    theSwipa.on('touchStart', (swiper, touchstart) => {
+        Eventbus.$emit('int-touchStart', touchstart, this.tierIndex);
     });
+    theSwipa.on('transitionEnd', (swiper) => {
+        Eventbus.$emit('int-transitionEnd', swiper, this.tierIndex);
+    });
+    theSwipa.on('transitionStart', (swiper) => {
+        Eventbus.$emit('int-transitionStart', swiper, this.tierIndex);
+    });
+    theSwipa.on('touchEnd', (swiper, touchend) => {
+        Eventbus.$emit('int-touchEnd', swiper, touchend, this.tierIndex);
+    });
+//    theSwipa.on('touchMove', (swiper, touchMove) => {
+//        Eventbus.$emit('int-touchMove', swiper, touchMove, this.tierIndex);
+//    });
+
       //  trBindFuncs.push(onSetTranslate, onSetTransition, onProgress);
 
     // CALLBACKS

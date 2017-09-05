@@ -45,13 +45,14 @@ export default {
       activeTierType: '',
       mainSliderOption: {
         // touchMoveStopPropagation: false,
-        // shortSwipes: false,
         notNextTick: true,
         slidesPerView: 'auto',
         centeredSlides: true,
         watchSlidesProgress: true,
         watchSlidesVisibility: true,
         autoplay: false,
+        // For testing only:
+        keyboardControl: true,
       },
     };
   },
@@ -136,12 +137,6 @@ export default {
     this.setActiveIndex();
     // console.log(this.$refs.interaction);
 
-    function setTrBinding() {
-      theSwipa.on('setTranslate', (swiper, translate) => {
-        console.log('translate', translate);
-      });
-    }
-
 //     console.log(this.typeArray);
 //     const allIntIndexes = [];
 //     this.typeArray.forEach((no) => {
@@ -180,7 +175,8 @@ export default {
       else {
         self.setActiveIndex();
         Eventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
-        console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:', self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
+// console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:',
+// self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
         clearRepeatedCheck();
       }
     }
@@ -199,8 +195,8 @@ export default {
     Eventbus.$on('the-active-tier', (tierType, tierIndex) => {
       console.log(tierType, tierIndex);
        if (tierType === 'interactive') {
-          this.mainSwiper.lockSwipes();
-          this.mainSwiper.off('touchEnd');
+        this.mainSwiper.lockSwipes();
+        this.mainSwiper.off('touchEnd');
       // Object.keys(intSwipersObj).forEach((key) => {
       //   const theSlider = intSwipersObj[key].swiper;
       //   const stringedIndex = tierIndex.toString();
