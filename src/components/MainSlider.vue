@@ -226,6 +226,9 @@ export default {
   },
   updated() {
   },
+  beforeDestroy() {
+    Eventbus.$off();
+  },
 };
 </script>
 
