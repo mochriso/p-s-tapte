@@ -3,11 +3,35 @@
   <swiper :options="mainSliderOption" ref="mainSlider" class="main-slider" v-for="(item,index) in story" key="item.id">
     <swiper-slide class="slide-main" v-for="(item,index) in tierArray" key="item.id">
       <template v-if="item.type === 'interactive'">
-        <interactive-tier :tierIndex="index" :activeIndex="activeIndex" :key="item.id">
-        </interactive-tier>
-      </template>
-        <tier :key="item.id" :tier="item" :tierIndex="index" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :intTierArray="intTierArray" :tiernr="addZero(index+1)">
+        <interactive-slider
+        :interactionContext="item.interactionContext"
+        :tierIndex="index"
+        :mainActiveIndex="activeIndex"
+        :key="item.id">
+        </interactive-slider>
+        <tier :key="item.id"
+        :interactionContext="item.interactionContext"
+        :tier="item"
+        :tierIndex="index"
+        :activeIndex="activeIndex"
+        :type="item.type"
+        :rows="item.rows"
+        :intTierArray="intTierArray"
+        :tiernr="addZero(index+1)">
         </tier>
+      </template>
+      <template v-else>
+        <tier
+        :key="item.id"
+        :tier="item"
+        :tierIndex="index"
+        :activeIndex="activeIndex"
+        :type="item.type"
+        :rows="item.rows"
+        :intTierArray="intTierArray"
+        :tiernr="addZero(index+1)">
+        </tier>
+      </template>
       </swiper-slide>
   </swiper>
 </div>
@@ -17,13 +41,13 @@
 //  :animAsset="item.interaction.animAsset" :transform="item.interaction.transform"
 //  :animDirection="item.interaction.animDirection"
 // :swipername="intSwiper(index)"
-import { Eventbus } from './eventbus';
+import { MainEventbus } from './maineventbus';
 
 import data from './data';
 
 import Interaction from './Interaction';
 
-import InteractiveTier from './InteractiveTier';
+import InteractiveSlider from './InteractiveSlider';
 
 import Tier from './Tier';
 
@@ -37,7 +61,7 @@ export default {
   mixins: [addZero, iterate],
   name: 'main-slider',
   props: [],
-  components: { Tier, Interaction, InteractiveTier },
+  components: { Tier, Interaction, InteractiveSlider },
   data() {
     return {
       story: data.story,
@@ -117,12 +141,12 @@ export default {
     },
     // emitActiveType(val) {
     //     // const self = this;
-    //     Eventbus.$emit('the-active-tier-type', this.getActiveType(val));
+    //     MainEventbus.$emit('the-active-tier-type', this.getActiveType(val));
     //     console.log('emitting active type', this.getActiveType(val));
     // },
 
     // emitInteractiveIndex() {
-    //      Eventbus.$emit('interactive-tier-index', this.interactiveIndArr());
+    //      MainEventbus.$emit('interactive-slider-index', this.interactiveIndArr());
     //      // console.log('emitting interactive index', this.getInteractiveIndex());
     // },
 
@@ -174,7 +198,7 @@ export default {
       }
       else {
         self.setActiveIndex();
-        Eventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
+        MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
 // console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:',
 // self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
         clearRepeatedCheck();
@@ -192,11 +216,11 @@ export default {
 
 // TOGGLE MAINSLIDER LOCK ON SPECIAL INTERACTIVITY
 
-    Eventbus.$on('the-active-tier', (tierType, tierIndex) => {
+    MainEventbus.$on('the-active-tier', (tierType, tierIndex) => {
       console.log(tierType, tierIndex);
        if (tierType === 'interactive') {
-        this.mainSwiper.lockSwipes();
-        this.mainSwiper.off('touchEnd');
+      //  this.mainSwiper.lockSwipes();
+    //    this.mainSwiper.off('touchEnd');
       // Object.keys(intSwipersObj).forEach((key) => {
       //   const theSlider = intSwipersObj[key].swiper;
       //   const stringedIndex = tierIndex.toString();
@@ -217,7 +241,7 @@ export default {
     });
 // PROPERLY NAME INTERACTIVE NESTED SWIPER INSTANCE
     // const intIndexArray = [];
-    // Eventbus.$on('every-tier-type', (tierIndex, tierType) => {
+    // MainEventbus.$on('every-tier-type', (tierIndex, tierType) => {
     //   if (tierType === 'interactive') {
     //     intIndexArray.push(tierIndex);
     //   }
@@ -227,7 +251,7 @@ export default {
   updated() {
   },
   beforeDestroy() {
-    Eventbus.$off();
+    MainEventbus.$off();
   },
 };
 </script>

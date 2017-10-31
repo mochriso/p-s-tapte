@@ -2,13 +2,17 @@
     <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
       <swiper-slide class="slide-interactive">
       </swiper-slide>
+      <template v-for="item in interactionContext">
+        <swiper-slide class="slide-interactive">
+        </swiper-slide>
+      </template>
     </swiper>
 </template>
 
 <script>
-import { Eventbus } from './eventbus';
+import { IntEventbus } from './inteventbus';
 
-import { Translatebus } from './translatebus';
+import { MainEventbus } from './maineventbus';
 
 import addZero from './mixins';
 
@@ -18,11 +22,13 @@ import iterate from './mixins';
 
 export default {
   mixins: [addZero, iterate, same],
-  name: 'interactive-tier',
-  props: ['tierIndex', 'activeIndex'],
+  name: 'interactive-slider',
+  props: ['tierIndex', 'mainActiveIndex', 'interactionContext'],
   components: { },
   data() {
     return {
+    //  areInteractionsDone: false,
+      progressVal: '',
       interactiveSliderOption: {
         notNextTick: true,
         nested: true,
@@ -36,7 +42,20 @@ export default {
       },
     };
   },
+  watch: {
+    isMainActiveSlide() {
+      if (this.isMainActiveSlide) {
+        this.$emit('is-main-active-slide', this.tierIndex);
+      }
+    },
+  },
   computed: {
+    isMainActiveSlide() {
+      if (this.mainActiveIndex === this.tierIndex) {
+        return true;
+      }
+      return false;
+    },
     // returns array of the INDEXES of all interactive tiers
     // interactiveIndArr() {
     //    const tArr = this.tierArray;
@@ -62,7 +81,6 @@ export default {
     //      intObj.push(obj);
     //      return intObj[0];
     // },
-    // returns an ARRAY with all interactive sub-slider swiper objects
     intSwiper() {
       return this.$refs.interactiveSlider.swiper;
     },
@@ -71,61 +89,74 @@ export default {
 
   },
   created() {
-
   },
   mounted() {
   //  console.log('tierIndex', this.tierIndex);
     const theSwipa = this.intSwiper;
-//  APPEND AN EMPTY SLIDE IN ORDER TO PROPERLY USE PROGRESS/ SETTRANSLATE VALUES
-    theSwipa.appendSlide('<div class="slide-interactive swiper-slide"></div>');
-
-    //   REWIND SWIPER TO START IF END IS REACHED
-    //   (END BEING THE APPENDED SLIDE)
-    //   UPDATE SWIPER AND PROGRESS
-
-    // EMIT TIER INDEX
-
-    // EMIT TOUCH EVENTS
-    theSwipa.on('reachEnd', (swiper) => {
-      Eventbus.$emit('int-reachEnd', this.tierIndex);
-       // swiper.slideTo(0, 0, false);
-      //  swiper.update(true);
-      //  swiper.updateProgress();
-    });
-    theSwipa.on('sliderMove', (swiper, sliderMove) => {
-      Eventbus.$emit('int-sliderMove', sliderMove, this.tierIndex);
-    });
-    theSwipa.on('reachBeginning', (swiper) => {
-      Eventbus.$emit('int-reachBeginning', this.tierIndex);
-    });
-    theSwipa.on('setTranslate', (swiper, translate) => {
-        Translatebus.$emit('int-translate', translate, this.tierIndex);
-      //  console.log('int-translate', swiper, translate, this.tierIndex);
-    });
-    theSwipa.on('transitionStart', (swiper) => {
-        Eventbus.$emit('int-transitionStart', this.tierIndex);
-    });
-    theSwipa.on('setTransition', (swiper, transition) => {
-        Eventbus.$emit('int-transition', transition, this.tierIndex);
-    });
-    theSwipa.on('transitionEnd', (swiper) => {
-        Eventbus.$emit('int-transitionEnd', this.tierIndex);
-    });
-    theSwipa.on('progress', (swiper, progress) => {
-        Eventbus.$emit('int-progress', progress, this.tierIndex);
-    });
-    // theSwipa.on('touchStart', (swiper, touchstart) => {
-    //     Eventbus.$emit('int-touchStart', touchstart, this.tierIndex);
+    // theSwipa.appendSlide('<div class="slide-interactive swiper-slide"></div>');
+    // IntEventbus.$on('interactions-done', () => {
+    //   this.areInteractionsDone = true;
+    // //  theSwipa.progress = 1;
     // });
-    // theSwipa.on('transitionEnd', (swiper) => {
-    //     Eventbus.$emit('int-transitionEnd', swiper, this.tierIndex);
-    // });
+    // const resetSwiper = () => {
+    //                     theSwipa.slideTo(0, 0, false);
+    //                     theSwipar.update(true);
+    //                     };
+    // IntEventbus.$on('movingFwd-not-first', () => {
+    //         setTimeout(resetSwiper, 10);
+    //     });
 
-    theSwipa.on('touchEnd', (swiper, touchend) => {
-        Eventbus.$emit('int-touchEnd', touchend, this.tierIndex);
+
+    this.$on('is-main-active-slide', (tierIndex) => {
+      console.log('interactiveSlide component: is main active slide', tierIndex);
+      // EMIT TOUCH EVENTS
+      theSwipa.on('transitionEnd', (swiper) => {
+          MainEventbus.$emit('int-transitionEnd', swiper);
+          console.log('int-transitionEnd', swiper);
+      });
+
+      theSwipa.on('reachEnd', (swiper) => {
+        IntEventbus.$emit('int-reachEnd');
+         // swiper.slideTo(0, 0, false);
+        //  swiper.update(true);
+        //  swiper.updateProgress();
+      });
+      theSwipa.on('sliderMove', (swiper, sliderMove) => {
+        IntEventbus.$emit('int-sliderMove', sliderMove);
+      });
+      theSwipa.on('reachBeginning', (swiper) => {
+        IntEventbus.$emit('int-reachBeginning', swiper);
+      });
+      theSwipa.on('setTranslate', (swiper, translate) => {
+          IntEventbus.$emit('int-setTranslate', translate);
+        //  console.log('int-translate', swiper, translate);
+      });
+      theSwipa.on('transitionStart', (swiper) => {
+          IntEventbus.$emit('int-transitionStart');
+      });
+      theSwipa.on('setTransition', (swiper, transition) => {
+          IntEventbus.$emit('int-setTransition', transition);
+      });
+
+      theSwipa.on('progress', (swiper, progress) => {
+          this.progressVal = progress;
+          IntEventbus.$emit('int-progress', progress);
+      });
+      // theSwipa.on('touchStart', (swiper, touchstart) => {
+      //     IntEventbus.$emit('int-touchStart', touchstart);
+      // });
+      // theSwipa.on('transitionEnd', (swiper) => {
+      //     IntEventbus.$emit('int-transitionEnd', swiper);
+      // });
+
+      theSwipa.on('touchEnd', (swiper, touchend) => {
+          IntEventbus.$emit('int-touchEnd', touchend);
+      });
     });
+
+
 //    theSwipa.on('touchMove', (swiper, touchMove) => {
-//        Eventbus.$emit('int-touchMove', swiper, touchMove, this.tierIndex);
+//        IntEventbus.$emit('int-touchMove', swiper, touchMove);
 //    });
 
       //  trBindFuncs.push(onSetTranslate, onSetTransition, onProgress);
@@ -153,6 +184,10 @@ export default {
         // theSwipa.on('progress', (swiper, progress) => {
         //   console.log('progress', progress);
         // });
+  },
+  beforeDestroy() {
+    IntEventbus.$off();
+    MainEventbus.$off();
   },
 };
 </script>
@@ -184,7 +219,6 @@ export default {
       width: 100%;
       margin: 0;
       padding: 0;
-      .tier {}
     }
 }
 </style>

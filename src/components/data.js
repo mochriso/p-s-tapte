@@ -21,26 +21,26 @@ export default {
                 { type: 'static',
                   rows: [
                     { panels: [
-                      { name: 't02-p01', type: 'static', position: 'left top' }, { name: 't02-p02', type: 'static', position: 'right top' },
+                      { name: 't02-p01', type: 'static', position: 'left top' },
                     ] },
                     { panels: [
-                      { name: 't02-p03', type: 'static', position: 'center top', grow: 2 }, { name: 't02-p04', type: 'static', position: 'center bottom', grow: 1, shrink: 1 },
+                      { name: 't02-p02', type: 'static', position: 'left top' }, { name: 't02-p03', type: 'static', position: 'right top', grow: 1, shrink: 1 },
                     ] },
                     { panels: [
-                      { name: 't02-p05', type: 'static', position: 'center top', grow: 1.4 }, { name: 't02-p06', type: 'static', position: 'right bottom' },
+                      { name: 't02-p04', type: 'static', position: 'center top' },
                     ] },
                   ], // rows #2
                   }, // tier # 2
                   { type: 'static',
                     rows: [
                       { panels: [
-                        { name: 't03-p01', type: 'static', position: 'center top' },
+                        { name: 't03-p01', type: 'static', position: 'left top' },
                       ] },
                       { panels: [
-                        { name: 't03-p02', type: 'static', position: 'center top' },
+                        { name: 't03-p02', type: 'static', position: 'left top' }, { name: 't03-p03', type: 'static', position: 'center top' },
                       ] },
                       { panels: [
-                        { name: 't03-p03', type: 'static', position: 'center top' },
+                        { name: 't03-p04', type: 'static', position: 'center top' },
                       ] },
                     ],
                   },
@@ -106,6 +106,7 @@ export default {
                   ],
                 },
                 { type: 'interactive',
+                  interactionContext: ['panel', 'panel', 'panel'],
                   rows: [
                     { panels: [
                       { name: 't08-p01',
@@ -180,6 +181,10 @@ export default {
                   ],
                 },
                 { type: 'interactive',
+                interactionContext: ['panel'],
+                  animation: {
+                    effect: 'fadeToBlack',
+                  },
                   rows: [
                     { panels: [
                       { name: 't10-p01', type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },

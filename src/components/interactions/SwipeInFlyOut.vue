@@ -23,7 +23,7 @@
 export default {
   mixins: [],
   name: 'swipe-in-fly-out',
-  props: ['animation', 'interactionIndex', 'cycle', 'translateVal', 'transitionVal', 'progressVal', 'nextInteraction'],
+  props: ['animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
   components: { },
   data() {
     return {
@@ -38,41 +38,35 @@ export default {
     };
   },
   computed: {
-    // startStyle() {
-    // },
-    // movingFwdStyle() {
-    //   return ('translateX' + '(' + this.translateVal + 'px)');
-    // },
-    // animatingStyle() {
-    //   return ('all ' + this.transitionVal + 'ms ease-out');
-    // },
-    // endStyle() {
-    // },
-    // movingBackStyle() {
-    //   return ('translateX' + '(' + (this.translateVal * 2) + 'px)');
-    // },
-
+    SpeedUpTranslate() {
+      return (this.translateVal * 2);
+    },
     styles() {
     const obj = {};
     //   //    console.log('idle');
-    obj.left = '100vw';
+    const startPosVal = ((this.interactionIndex + 1) * 100) + '%';
+    obj.left = startPosVal;
     const start = () => {
 
     };
     const end = () => {
-      obj.transform = ('translateX' + '(' + (this.translateVal * 2.3) + 'px)');
+      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
     };
     const movingFwd = () => {
-      obj.transform = ('translateX' + '(' + (this.translateVal * 2) + 'px)');
+      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
     };
     const movingBwd = () => {
-      obj.transform = ('translateX' + '(' + (this.translateVal * 2) + 'px)');
+      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
     };
-    const animating = () => {
-      obj.transform = ('translateX' + '(' + (this.translateVal * 2.3) + 'px)');
+    const animatingFwd = () => {
       obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
+      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
     };
-    const cycleArr = [start, movingFwd, animating, end, movingBwd];
+    const animatingBwd = () => {
+      obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
+      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
+    };
+    const cycleArr = [start, movingFwd, animatingFwd, animatingBwd, end, movingBwd];
 
     for (let i = 0; i < cycleArr.length; i += 1) {
       if (cycleArr[i].name === this.cycle) {
@@ -114,42 +108,8 @@ export default {
     // },
   },
   watch: {
-    cycle(newVal, oldVal) {
-      if (newVal === 'start') {
-        this.$emit('cycle-start');
-    //    this.styles.transform =
-        setTimeout(() => {
-        }, 10);
-      }
-      else if (oldVal === 'start' && newVal === 'moving') {
-        this.$emit('cycle-moving-fwd');
-    //    this.styles.obj.transform = ('translateX' + '(' + this.translateVal + 'px)');
-      }
-      else if (newVal === 'animating') {
-        this.$emit('cycle-animating');
-    //    this.styles.obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
-      }
-      else if (newVal === 'end') {
-        this.$emit('cycle-end');
-      }
-      else if (oldVal === 'end' && newVal === 'moving') {
-        this.$emit('cycle-moving-bwd');
-    //    this.styles.obj.transform = ('translateX' + '(' + (this.translateVal * 2) + 'px)');
-      }
-    },
-    progress(newVal, oldVal) {
-      if (newVal === 1) {
-        this.$emit('progressEnd');
-      }
-      if (newVal === 0) {
-        this.$emit('progressStart');
-      }
-    },
   },
   methods: {
-    updateNextInteraction() {
-      this.$emit('update:nextInteraction', newVal);
-    },
   //   beforeEnter(el) {
   //   this.state = 'idle';
   //   console.log('beforeEnter: idle?', this.state);
@@ -219,31 +179,18 @@ export default {
   created() {
   },
   mounted() {
-    this.$on('cycle-moving-fwd', () => {
-      console.log('event moving-fwd');
-    //  this.styles = this.movinFwdStyle;
-    });
-    this.$on('cycle-animating', () => {
-      console.log('event animating');
-    //  this.styles = this.animatingStyle;
-    });
-    this.$on('cycle-end', () => {
-      console.log('event end');
-  //    this.styles = this.endStyle;
-    //    obj.left = '-100vw';
-      //  obj.transform = 'translateX' + '(' + this.translateVal + 'px)';
-    });
-    this.$on('cycle-moving-bwd', () => {
-      console.log('event moving-bwd');
-  //    this.styles = this.movingBackStyle;
-    });
-    // console.log(this.styles, this.entering);
-  //  console.log(this.interactionIndex, this.nextInteraction);
+
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+.interaction-item {
+  position: absolute;
+  bottom: 0px;
+  width: 120%;
+  height: 120%;
+}
 // .v-enter {
 // // transform: translateX(90vw);
 // opacity: 0;
@@ -259,12 +206,7 @@ export default {
 // .end-point {
 //   right: 90vw;
 // }
- .start-point {
-   left: 100vw;
- }
- .end-point {
-   left: -100vw;
- }
+
 // .v-leave {
 //   transform: translateX(-950px) !important;
 // }

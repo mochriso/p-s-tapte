@@ -7,8 +7,6 @@
 <script>
 import animAssetArt from './mixins';
 
-import { Eventbus } from './eventbus';
-
 export default {
   mixins: [animAssetArt],
   name: 'interaction-item',
@@ -70,10 +68,13 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.interaction-item {
-  position: absolute;
+<style scoped lang="scss">
+img {
+  // position: absolute;
   width: 100%;
-  height: auto;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 </style>

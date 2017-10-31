@@ -3,17 +3,44 @@
     <slot>
     </slot>
     <template v-if="tier.interactions">
-      <interaction v-for="item in tier.interactions" :key="item.id" :type="item.animation.behaviour" :interactionIndex="item.interactionIndex" :animation="item.animation" :interactionItem="item.interactionItem" :tierIndex="tierIndex" ref="interaction">
+      <interaction v-for="item in tier.interactions"
+      :key="item.id"
+      :type="item.animation.behaviour"
+      :interactionIndex="item.interactionIndex"
+      :animation="item.animation"
+      :interactionItem="item.interactionItem"
+      :tierIndex="tierIndex"
+      :mainActiveIndex="activeIndex"
+      :interactionContext="interactionContext"
+      ref="interaction">
       </interaction>
     </template>
     <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
       <template v-if="item.interactions">
-        <interaction v-for="item in item.interactions" :key="item.id"  :type="item.animation.behaviour" :interactionIndex="item.interactionIndex" :animation="item.animation" :interactionItem="item.interactionItem" :tierIndex="tierIndex" ref="interaction">
+        <interaction v-for="item in item.interactions"
+        :key="item.id"
+        :type="item.animation.behaviour"
+        :interactionIndex="item.interactionIndex"
+        :animation="item.animation"
+        :interactionItem="item.interactionItem"
+        :tierIndex="tierIndex"
+        :mainActiveIndex="activeIndex"
+        :interactionContext="interactionContext"
+        ref="interaction">
         </interaction>
       </template>
         <panel v-for="(item, index) in item.panels" :key="item.id" :panel="item" :type="item.type">
           <template v-if="item.interactions">
-            <interaction v-for="item in item.interactions" :key="item.id"  :type="item.animation.behaviour" :interactionIndex="item.interactionIndex" :animation="item.animation" :interactionItem="item.interactionItem" :tierIndex="tierIndex" ref="interaction">
+            <interaction v-for="item in item.interactions"
+            :key="item.id"
+            :type="item.animation.behaviour"
+            :interactionIndex="item.interactionIndex"
+            :animation="item.animation"
+            :interactionItem="item.interactionItem"
+            :tierIndex="tierIndex"
+            :mainActiveIndex="activeIndex"
+            :interactionContext="interactionContext"
+            ref="interaction">
             </interaction>
           </template>
         </panel>
@@ -35,7 +62,7 @@ import addZero from './mixins';
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['type', 'rows', 'tiernr', 'activeIndex', 'tier', 'intTierArray', 'tierIndex'],
+  props: ['type', 'rows', 'tiernr', 'activeIndex', 'tier', 'intTierArray', 'tierIndex', 'interactionContext'],
   data() {
     return {
     };

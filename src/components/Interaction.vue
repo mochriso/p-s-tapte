@@ -1,14 +1,28 @@
 <template lang="html">
-  <component :is="activeComponent" v-if="nextInt" :interactionIndex="interactionIndex" :nextInteraction.sync="nextInteraction" :translateVal="eventVals.translateVal" :transitionVal="eventVals.transitionVal" :progressVal="eventVals.progressVal" :cycle="eventVals.cycle" :animation="this.animation" class="touch-behaviour" :class="this.type">
+  <component
+  :is="activeComponent"
+  v-show="showInt"
+  :interactionIndex="interactionIndex"
+  :translateVal="translateVal"
+  :movingFwdVal="movingFwdVal"
+  :movingBwdVal="movingBwdVal"
+  :animatingFwdVal="animatingFwdVal"
+  :animatingBwdVal="animatingBwdVal"
+  :transitionVal="transitionVal"
+  :progressVal="progressVal"
+  :cycle="cycle"
+  :animation="this.animation"
+  class="touch-behaviour"
+  :class="this.type">
     <interaction-item :animAsset="this.interactionItem.animAsset">
     </interaction-item>
   </component>
 </template>
 
 <script>
-import { Eventbus } from './eventbus';
+import { IntEventbus } from './inteventbus';
 
-import { Translatebus } from './translatebus';
+import { MainEventbus } from './maineventbus';
 
 import InteractionItem from './InteractionItem';
 
@@ -29,9 +43,15 @@ export default {
       type: Number,
       required: true,
     },
+    interactionContext: {
+      type: Array,
+    },
     tierIndex: {
       type: Number,
       required: true,
+    },
+    mainActiveIndex: {
+      type: Number,
     },
     interactionItem: {
       type: Object,
@@ -42,107 +62,290 @@ export default {
   },
   data() {
     return {
+      intActiveIndex: 0,
+  //    isResponding: false,
+  //    sumPlayedInteractions: 0,
+      showInt: false,
       activeComponent: this.type,
-      nextInteraction: 0,
-      eventVals: {
-        beginningReached: true,
-        endReached: false,
-        translateVal: '',
-        transitionVal: '',
-        progressVal: '',
-      //  touchStart: false,
-      //  touchMove: false,
-    //    touchEnd: false,
-        cycle: 'start',
-      },
+      beginningReached: true,
+      endReached: false,
+      animatingFwdVal: '',
+      animatingBwdVal: '',
+      movingFwdVal: '',
+      movingBwdVal: '',
+      translateVal: '',
+      transitionVal: '',
+      isTransitioning: false,
+      hasTranisitionEnded: false,
+      isTranslating: false,
+      progressVal: '',
+    //  touchStart: false,
+      sliderMove: false,
+  //    touchEnd: false,
+      cycle: 'start',
     };
   },
   computed: {
-    nextInt() {
-      if (this.interactionIndex === this.nextInteraction) {
+    interactionCount() {
+      return this.interactionContext.length;
+    },
+    isMainActiveSlide() {
+      if (this.mainActiveIndex === this.tierIndex) {
         return true;
       }
+      return false;
+    },
+    hasNextInteractionIndex() {
+      if (this.interactionIndex === this.intActiveIndex) {
+        return true;
+      }
+      return false;
+    },
+    hasPreviousInteractionIndex() {
+      if ((this.interactionIndex + 1) === this.intActiveIndex) {
+        return true;
+      }
+      return false;
+    },
+    isNextInteraction() {
+      if (this.isMainActiveSlide) {
+        if (this.hasNextInteractionIndex) {
+          return true;
+        }
+        return false;
+      }
+      return false;
+    },
+    isPreviousInteraction() {
+      if (this.isMainActiveSlide) {
+        if (this.hasPreviousInteractionIndex) {
+          return true;
+        }
+        return false;
+      }
+      return false;
     },
   },
-  created() {
-    // function Eventbroker(emitRef, emittedVal, localVal) {
-    //   Eventbus.$on(emitRef, (tierIndex) => {
-    //     if (tierIndex === this.activeIndex) {
-    //       this.eventVals.localVal = emittedVal;
+  watch: {
+    isNextInteraction() {
+      if (this.isNextInteraction) {
+        this.showInt = true;
+//        this.isResponding = true;
+      //  this.$emit('is-active-interaction');
+      }
+      else {
+//        this.isResponding = false;
+      }
+    },
+    isMainActiveSlide() {
+      if (this.isMainActiveSlide) {
+        this.$emit('is-main-active-slide');
+      }
+    },
+    hasTranisitionEnded() {
+      if (this.hasTranisitionEnded) {
+        if (this.isNextInteraction) {
+          this.showInt = true;
+          this.cycle = 'start';
+        }
+        else if (this.isPreviousInteraction) {
+          this.showInt = true;
+          this.cycle = 'end';
+          console.log('cycle End?', this.cycle);
+        }
+        else if (this.interactionIndex > this.intActiveIndex) {
+          this.showInt = false;
+          this.cycle = 'start';
+          console.log('cycle start?', this.cycle);
+        }
+      }
+    },
+    translateVal(newVal, oldVal) {
+      if (this.sliderMove) {
+        if (newVal < oldVal) {
+          this.cycle = 'movingFwd';
+          this.movingBwdVal = '';
+          this.movingFwdVal = newVal;
+        }
+        else {
+          this.cycle = 'movingBwd';
+          this.movingFwdVal = '';
+          this.movingBwdVal = newVal;
+        }
+      }
+    },
+    cycle(newVal, oldVal) {
+    },
+    isTransitioning() {
+      if (this.isTransitioning) {
+       if (this.cycle === 'movingFwd') {
+         this.cycle = 'animatingFwd';
+         this.animatingBwdVal = '';
+         this.animatingFwdVal = this.translateVal;
+       }
+       else if (this.cycle === 'movingBwd') {
+         this.cycle = 'animatingBwd';
+         this.animatingfwdVal = '';
+         this.animatingBwdVal = this.translateVal;
+       }
+     }
+   },
+//    isResponding(val) {
+//        this.$emit('is-it-responding', val);
+//    },
+    // cycle(newVal, oldVal) {
+    //   if (this.sliderMove) {
+    //     if (oldVal === 'start') {
+    //       if (newVal === 'movingBwd') {
+    //       //  this.isResponding = false;
+    //       }
+    // //      else if (newVal === 'movingFwd') {
+    // //        if (this.interactionIndex > 0) {
+    // //          IntEventbus.$emit('movingFwd-not-first');
+    // //        }
+    // //      }
     //     }
-    //     console.log('[emittedVal]', this.eventVals.localVal, emittedVal);
+    //     else if (oldVal === 'end') {
+    // //      if (newVal === 'movingBwd') {
+    // //      }
+    //       if (newVal === 'movingFwd') {
+    //     //    this.isResponding = false;
+    //       }
+    //     }
+    //   }
+  //  },
+    // sumPlayedInteractions(newVal) {
+    //   if (newVal === (this.interactionCount)) {
+    //     IntEventbus.$emit('interactions-done');
+    //   }
+    // },
+  },
+  created() {
+    // if (this.cycle === 'start') {
+    //     this.cycle = 'movingFwd';
+    //     console.log('cycle movingFwd?', this.cycle);
+    // }
+    // else if (this.cycle === 'end') {
+    //     this.cycle = 'movingBwd';
+    //     console.log('cycle movingBwd?', this.cycle);
+    // }
+
+    // function Eventbroker(emitRef, emittedVal, localVal) {
+    //   IntEventbus.$on(emitRef, (tierIndex) => {
+    //     if (tierIndex === this.activeIndex) {
+    //       this.localVal = emittedVal;
+    //     }
+    //     console.log('[emittedVal]', this.localVal, emittedVal);
     //   });
     // }
     //
-    // Eventbroker('int-translate', translate, translateVal);
-        Eventbus.$on('int-reachBeginning', (tierIndex) => {
-          this.eventVals.beginningReached = true;
-          this.eventVals.endReached = false;
-        });
-        Eventbus.$on('int-reachEnd', (tierIndex) => {
-          this.eventVals.endReached = true;
-          this.eventVals.beginningReached = false;
-        });
-        Eventbus.$on('int-sliderMove', (sliderMove, tierIndex) => {
-          if (this.eventVals.cycle === 'start') {
-              this.eventVals.cycle = 'movingFwd';
-              console.log('cycle movingFwd?', this.eventVals.cycle);
-          }
-          else if (this.eventVals.cycle === 'end') {
-              this.eventVals.cycle = 'movingBwd';
-              console.log('cycle movingBwd?', this.eventVals.cycle);
-          }
-        });
 
-        Translatebus.$on('int-translate', (translate, tierIndex) => {
-        //  console.log('receiving translate', translate);
-      //    if (tierIndex === this.tierIndex) {
-            this.eventVals.translateVal = translate;
-          //  this.eventVals.touchEvent = 'setTranslate';
-            // this.intStatus.isStarting = false;
-            // this.intStatus.isActive = true;
-            // this.intStatus.isEnding = false;
-      //   }
+    // Eventbroker('int-translate', translate, translateVal);
+    // MainEventbus.$on('int-active-index', (sumPlayedInteractions) => {
+    //   if (tierIndex === this.tierIndex) {
+    //   }
+    //   else {
+    //   //  IntEventbus.$off();
+    //   }
+    // });
+    // if (sumPlayedInteractions !== this.interactionIndex) {
+    //   // IntEventbus.$off();
+    //   this.showInt = false;
+    // }
+    // else {
+    //   this.showInt = true;
+    // }
+    // IntEventbus.$on('interaction-animating-fwd', () => {
+    //   while (this.sumPlayedInteractions < this.interactionCount) {
+    //     this.sumPlayedInteractions += 1;
+    //   }
+    // });
+    // IntEventbus.$on('interaction-animating-bwd', () => {
+    //   while (this.sumPlayedInteractions > 0) {
+    //     this.sumPlayedInteractions -= 1;
+    //   }
+    // });
+
+    this.$on('is-main-active-slide', () => {
+      MainEventbus.$on('int-transitionEnd', (swiper) => {
+          this.isTransitioning = false;
+          this.hasTranisitionEnded = true;
+          this.intActiveIndex = swiper.activeIndex;
+      });
+    });
+
+    const blockWrongDirection = function fn(sliderData, localVersion) {
+      if (this.isPreviousInteraction) {
+        if (this.cycle === 'movingFwd') {
+          this[localVersion] = '';
+        }
+        this[localVersion] = sliderData;
+      }
+      else if (this.isNextInteraction) {
+        if (this.cycle === 'movingBwd') {
+          this[localVersion] = '';
+        }
+        this[localVersion] = sliderData;
+      }
+    };
+
+//    this.$on('is-it-responding', (isResponding) => {
+  //    if (isResponding) {
+        IntEventbus.$on('int-reachBeginning', () => {
+          this.beginningReached = true;
+          this.endReached = false;
         });
-        Eventbus.$on('int-transition', (transition, tierIndex) => {
-            this.eventVals.transitionVal = transition;
+        IntEventbus.$on('int-reachEnd', () => {
+          this.endReached = true;
+          this.beginningReached = false;
         });
-        Eventbus.$on('int-transitionStart', (tierIndex) => {
+        IntEventbus.$on('int-sliderMove', (sliderMove) => {
+          this.hasTranisitionEnded = false;
+          this.sliderMove = true;
         });
-        Eventbus.$on('int-transitionEnd', (tierIndex) => {
-          if (this.eventVals.endReached) {
-            this.eventVals.cycle = 'end';
-            console.log('cycle End?', this.eventVals.cycle);
-          }
-          else if (this.eventVals.beginningReached) {
-            this.eventVals.cycle = 'start';
-            console.log('cycle start?', this.eventVals.cycle);
-          }
+        IntEventbus.$on('int-setTranslate', (translate) => {
+            this.translateVal = translate;
+            this.isTranslating = true;
         });
-        Eventbus.$on('int-progress', (progress, tierIndex) => {
-        //  console.log('receiving progress', progress);
-            this.eventVals.progressVal = progress;
-        //    console.log('progressVal', this.eventVals.progressVal);
+        IntEventbus.$on('int-setTransition', (transition) => {
+            this.transitionVal = transition;
         });
-        Eventbus.$on('int-touchEnd', (touchend, tierIndex) => {
-          this.eventVals.cycle = 'animating';
-          console.log('cycle animating?', this.eventVals.cycle);
+        IntEventbus.$on('int-transitionStart', () => {
+          this.isTransitioning = true;
         });
-        // Eventbus.$on('int-touchStart', (touchstart, tierIndex) => {
-        //     this.eventVals.touchEnd = false;
-        //     this.eventVals.touchStart = true;
-        // console.log('receiving touchStart', this.eventVals.touchStart,
-        // 'touchEnd:', this.eventVals.touchEnd);
+        IntEventbus.$on('int-progress', (progress) => {
+            this.progressVal = progress;
+        });
+        IntEventbus.$on('int-touchEnd', (touchend) => {
+          this.hasTranisitionEnded = false;
+          this.sliderMove = false;
+        });
+//      }
+//      else {
+//        IntEventbus.$off();
+//      }
+//    });
+
+    this.$on('is-active-interaction', () => {
+//      this.isResponding = true;
+      console.log('Interaction component', this.interactionIndex, ': is active interaction');
+    });
+        // IntEventbus.$on('int-touchStart', (touchstart, tierIndex) => {
+        //     this.touchEnd = false;
+        //     this.touchStart = true;
+        // console.log('receiving touchStart', this.touchStart,
+        // 'touchEnd:', this.touchEnd);
         // });
 
-        // Eventbus.$on('int-touchMove', (swiper, touchMove, tierIndex) => {
+        // IntEventbus.$on('int-touchMove', (swiper, touchMove, tierIndex) => {
         //   if (tierIndex === this.tierIndex) {
-        //     this.eventVals.touchEvent = 'touchMove';
+        //     this.touchEvent = 'touchMove';
         //   }
         // });
   },
   beforeDestroy() {
-    Eventbus.$off();
+    IntEventbus.$off();
+    MainEventbus.$off();
   },
 };
 </script>
@@ -151,5 +354,6 @@ export default {
   .touch-behaviour {
     position: absolute;
     width: 100%;
+    height: 100%;
   }
 </style>
