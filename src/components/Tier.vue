@@ -3,14 +3,17 @@
     <slot>
     </slot>
     <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
-      <template v-for="item in item.panels" v-if="item.type==='static'">
-        <static-panel :key="item.id" :panel="item" ></static-panel>
+      <template v-if="item.interaction">
+        <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection">
+        </interaction-item>
       </template>
-      <template v-else-if="item.type==='animated'">
-        <anim-panel :key="item.id" :panel="item"></anim-panel>
-      </template>
-      <template v-else-if="item.type==='scaled'">
-        <scaled-panel :key="item.id" :panel="item"></scaled-panel>
+      <template v-for="item in item.panels">
+        <panel :key="item.id" :panel="item" :type="item.type">
+          <template v-if="item.interaction">
+            <interaction-item v-show="showInt" :animAsset="item.interaction.animAsset" :transform="item.interaction.transform" :animDirection="item.interaction.animDirection" >
+            </interaction-item>
+          </template>
+        </panel>
       </template>
     </row>
   </div>
@@ -21,21 +24,19 @@
 
 import Row from './Row';
 
-import ScaledPanel from './ScaledPanel';
+import Panel from './Panel';
 
-import StaticPanel from './StaticPanel';
-
-import AnimPanel from './AnimPanel';
+import InteractionItem from './InteractionItem';
 
 import addZero from './mixins';
 
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['tierIndex', 'type', 'rows', 'tiernr', 'activeIndex'],
+  props: ['tierIndex', 'type', 'rows', 'tiernr', 'activeIndex', 'interactions'],
   data() {
     return {
-
+      showInt: true,
     };
   },
   computed: {
@@ -70,7 +71,7 @@ export default {
   //  this.tierIndex(ind);
 // console.log(this.index);
   },
-  components: { AnimPanel, StaticPanel, ScaledPanel, Row },
+  components: { Panel, Row, InteractionItem },
 };
 </script>
 

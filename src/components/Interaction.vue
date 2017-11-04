@@ -6,7 +6,7 @@
 export default {
   mixins: [],
   name: 'interaction',
-  props: ['gesture', 'animContext', 'animAsset', 'transform', 'translateBind', 'animDirection'],
+  props: ['gesture', 'animContext', 'translateBind'],
   data() {
     return {
 
