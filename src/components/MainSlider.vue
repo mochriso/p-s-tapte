@@ -1,23 +1,46 @@
 <template lang="html">
 <div class="sliding-container">
   <swiper :options="mainSliderOption" ref="mainSlider" class="main-slider" v-for="(item,index) in story" key="item.id">
-    <swiper-slide class="slide-main" v-for="(item,index) in tierArray" key="item.id">
-      <template v-if="item.type === 'interactive'">
-        <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
-          <swiper-slide class="slide-interactive">
-            <tier :key="item.id" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :interactions="item.interactions" :tiernr="addZero(index+1)">
-              <template v-for="item in item.interactions">
-                <interaction :key="item.id" :gesture="item.gesture" :animContext="item.animContext" :translateBind="item.translateBind" ref="interaction"></interaction>
-              </template>
+    <template v-for="(item,index) in story.chapters">
+      <template v-for="(scene,index) in item.scenes">
+        <swiper-slide class="slide-main" :sceneIndex="scene.number" v-for="(item,index) in scene.tiers" key="item.id">
+          <template scope="slideProps">
+          <template v-if="item.type === 'interactive'">
+            <interactive-slider
+            :interactionContext="item.interactionContext"
+            :tierIndex="index"
+            :mainActiveIndex="activeIndex"
+            :key="item.id">
+            </interactive-slider>
+            <tier :key="item.id"
+            :panelArray="panelArray"
+            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :interactionContext="item.interactionContext"
+            :tier="item"
+            :tierIndex="index"
+            :activeIndex="activeIndex"
+            :type="item.type"
+            :rows="item.rows"
+            :tierName="('t' + addZero(index))">
             </tier>
+          </template>
+          <template v-else>
+            <tier
+            :panelArray="panelArray"
+            :key="item.id"
+            :tier="item"
+            :tierIndex="index"
+            :activeIndex="activeIndex"
+            :type="item.type"
+            :rows="item.rows"
+            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :tierName="('t' + addZero(index))">
+            </tier>
+          </template>
+        </template>
           </swiper-slide>
-        </swiper>
+        </template>
       </template>
-      <template v-else>
-        <tier :key="item.id" :index="index" :activeIndex="activeIndex" :type="item.type" :rows="item.rows" :tiernr="addZero(index+1)">
-        </tier>
-      </template>
-      </swiper-slide>
   </swiper>
 </div>
 </template>
@@ -26,11 +49,13 @@
 //  :animAsset="item.interaction.animAsset" :transform="item.interaction.transform"
 //  :animDirection="item.interaction.animDirection"
 // :swipername="intSwiper(index)"
-import { Eventbus } from './eventbus';
+import { MainEventbus } from './maineventbus';
 
 import data from './data';
 
 import Interaction from './Interaction';
+
+import InteractiveSlider from './InteractiveSlider';
 
 import Tier from './Tier';
 
@@ -44,7 +69,7 @@ export default {
   mixins: [addZero, iterate],
   name: 'main-slider',
   props: [],
-  components: { Tier, Interaction },
+  components: { Tier, Interaction, InteractiveSlider },
   data() {
     return {
       story: data.story,
@@ -52,24 +77,14 @@ export default {
       activeTierType: '',
       mainSliderOption: {
         // touchMoveStopPropagation: false,
-        // shortSwipes: false,
         notNextTick: true,
         slidesPerView: 'auto',
         centeredSlides: true,
         watchSlidesProgress: true,
         watchSlidesVisibility: true,
         autoplay: false,
-      },
-      interactiveSliderOption: {
-        notNextTick: true,
-        nested: true,
-        virtualTranslate: true,
-        spaceBetween: 0,
-        slidesPerView: 'auto',
-        centeredSlides: false,
-        watchSlidesProgress: true,
-        watchSlidesVisibility: true,
-        autoplay: false,
+        // For testing only:
+        keyboardControl: true,
       },
     };
   },
@@ -90,6 +105,23 @@ export default {
       });
       return allTiers;
     },
+    panelArray() {
+      const allPanels = [];
+//    this.story.chapters.forEach((obj) => {
+//      obj.scenes.forEach((sco) => {
+//         sco.tiers
+      this.tierArray.forEach((to) => {
+             to.rows.forEach((ro) => {
+               ro.panels.forEach((po) => {
+                 allPanels.push(po);
+               });
+             });
+           });
+//        });
+//      });
+      return allPanels;
+    },
+
     // returns the type value of the current active tier, as string
     activeType() {
       const tArr = this.tierArray;
@@ -102,20 +134,6 @@ export default {
           }
         });
       return theType;
-    },
-    // returns array of the INDEXES of all interactive tiers
-    interactiveIndArr() {
-       const tArr = this.tierArray;
-       const allInteractives = [];
-         let i;
-         for (i = 0; i < tArr.length; i += 1) {
-           if (tArr[i].type === 'interactive') {
-             // console.log(tArr.indexOf(tArr[i]));
-             allInteractives.push(tArr.indexOf(tArr[i]));
-           }
-         }
-         // console.log(allInteractives);
-        return allInteractives;
     },
     // returns array of all interactive tiers as DATA OBJECTS
     intTierArray() {
@@ -140,38 +158,45 @@ export default {
       });
       return allTypes;
     },
-    // returns an OBJECT with all interactive tier indexes as numeric keys
-    // and their respective sub-sliders' swiper objects as values
-    intSwipersObject() {
-        const values = this.$refs.interactiveSlider;
-        const keys = this.interactiveIndArr;
-         const intObj = [];
-         const obj = {};
-         for (let i = 0; i < values.length; i += 1) {
-              obj[keys[i]] = values[i];
-            //  console.log(values[i].swiper);
-              }
-         intObj.push(obj);
-         return intObj[0];
-    },
-    // returns an ARRAY with all interactive sub-slider swiper objects
-    intSwipersArray() {
-      return this.$refs.interactiveSlider;
-    },
   },
   methods: {
+    tierIndex(sceneInd) {
+      const sceneTiers = [];
+      this.story.chapters.forEach((obj) => {
+        obj.scenes.forEach((o) => {
+          if (obj.scenes.indexOf(o) === sceneInd) {
+            o.tiers.forEach((yo) => {
+             sceneTiers.push(yo);
+            });
+          }
+        });
+      });
+      return sceneTiers;
+    },
+    SceneIndex() {
+      const scenesArr = [];
+      this.story.chapters.forEach((obj) => {
+        obj.scenes.forEach((o) => {
+          scenesArr.push(o);
+        });
+      });
+      scenesArr.forEach((t) => {
+
+      });
+      return scenes;
+    },
     // sets the component activeIndex numeric value as equal to the main swiper object activeIndex
     setActiveIndex() {
       this.activeIndex = this.mainSwiper.activeIndex;
     },
     // emitActiveType(val) {
     //     // const self = this;
-    //     Eventbus.$emit('the-active-tier-type', this.getActiveType(val));
+    //     MainEventbus.$emit('the-active-tier-type', this.getActiveType(val));
     //     console.log('emitting active type', this.getActiveType(val));
     // },
 
     // emitInteractiveIndex() {
-    //      Eventbus.$emit('interactive-tier-index', this.interactiveIndArr());
+    //      MainEventbus.$emit('interactive-slider-index', this.interactiveIndArr());
     //      // console.log('emitting interactive index', this.getInteractiveIndex());
     // },
 
@@ -184,85 +209,7 @@ export default {
   },
   mounted() {
     this.setActiveIndex();
-    const intSwipersObj = this.intSwipersObject;
-    const intSwipersArr = this.intSwipersArray;
-    const interactions = this.$refs.interaction;
     // console.log(this.$refs.interaction);
-
-    function setTrBinding() {
-      theSwipa.on('setTranslate', (swiper, translate) => {
-        console.log('translate', translate);
-      });
-    }
-
-    //   SET TIMEOUT IN ORDER TO INCLUDE ALL REF'ED INTERACTIVE SWIPER OBJECTS
-    //   (BECAUSE ONLY THE FIRST IS READY ON MOUNTED),
-    //   THEN MAKE ALL READY FOR INTERACTION:
-
-    setTimeout(() => {
-      intSwipersArr.forEach((el) => {
-        const theSwipa = el.swiper;
-
-    //  APPEND AN EMPTY SLIDE IN ORDER TO PROPERLY USE PROGRESS/ SETTRANSLATE VALUES
-        theSwipa.appendSlide('<div class="slide-interactive swiper-slide"><div class="tier interactive"><div class="row"><div class="panel"></div></div></div></div>');
-
-    //   REWIND SWIPER TO START IF END IS REACHED
-    //   (END BEING THE APPENDED SLIDE)
-    //   UPDATE SWIPER AND PROGRESS
-        theSwipa.on('onReachEnd', (swiper) => {
-            swiper.slideTo(0, 0, false);
-            swiper.update(true);
-            swiper.updateProgress();
-        });
-
-    // CREATE AND COLLECT TRANSLATE-EMIT FUNCTIONS
-        const trBindFuncs = [];
-        const onSetTranslate = (callback) => {
-          theSwipa.on('setTranslate', (swiper, translate) => {
-            Eventbus.$emit('set-translate', translate);
-            console.log('emitting translate:', translate);
-            // callback();
-          });
-        };
-        const onSetTransition = (callback) => {
-          theSwipa.on('setTransition', (swiper, transition) => {
-            Eventbus.$emit('set-transition', transition);
-            // callback();
-          });
-        };
-        const onProgress = (callback) => {
-          theSwipa.on('progress', (swiper, progress) => {
-            Eventbus.$emit('progress', progress);
-            console.log('emitting progress:', progress);
-            // callback();
-          });
-        };
-        trBindFuncs.push(onSetTranslate, onSetTransition, onProgress);
-
-    // CALLBACKS
-
-    // SET PROPER TRANSLATE BINDING FOR EACH INTERACTION AND INITIALISE BINDING FUNCTION
-        interactions.forEach((e) => {
-           const trBind = e.translateBind;
-           trBindFuncs.forEach((f) => {
-             if (f.name === trBind) {
-               f();
-             }
-           });
-        });
-
-    // JUST FOR LOGGING IN CONSOLE
-        // theSwipa.on('setTranslate', (swiper, translate) => {
-        //   console.log('translate', translate);
-        // });
-        // theSwipa.on('setTransition', (swiper, transition) => {
-        //   console.log('transition', transition);
-        // });
-        // theSwipa.on('progress', (swiper, progress) => {
-        //   console.log('progress', progress);
-        // });
-      });
-    }, 10);
 
 //     console.log(this.typeArray);
 //     const allIntIndexes = [];
@@ -301,8 +248,9 @@ export default {
       }
       else {
         self.setActiveIndex();
-        Eventbus.$emit('the-active-tier-type', self.activeType, self.activeIndex);
-        console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:', self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
+        MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
+// console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:',
+// self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
         clearRepeatedCheck();
       }
     }
@@ -318,11 +266,11 @@ export default {
 
 // TOGGLE MAINSLIDER LOCK ON SPECIAL INTERACTIVITY
 
-    Eventbus.$on('the-active-tier-type', (tierType, tierIndex) => {
+    MainEventbus.$on('the-active-tier', (tierType, tierIndex) => {
       console.log(tierType, tierIndex);
        if (tierType === 'interactive') {
-          this.mainSwiper.lockSwipes();
-          this.mainSwiper.off('touchEnd');
+      //  this.mainSwiper.lockSwipes();
+    //    this.mainSwiper.off('touchEnd');
       // Object.keys(intSwipersObj).forEach((key) => {
       //   const theSlider = intSwipersObj[key].swiper;
       //   const stringedIndex = tierIndex.toString();
@@ -343,7 +291,7 @@ export default {
     });
 // PROPERLY NAME INTERACTIVE NESTED SWIPER INSTANCE
     // const intIndexArray = [];
-    // Eventbus.$on('every-tier-type', (tierIndex, tierType) => {
+    // MainEventbus.$on('every-tier-type', (tierIndex, tierType) => {
     //   if (tierType === 'interactive') {
     //     intIndexArray.push(tierIndex);
     //   }
@@ -351,6 +299,9 @@ export default {
     // });
   },
   updated() {
+  },
+  beforeDestroy() {
+    MainEventbus.$off();
   },
 };
 </script>
@@ -387,34 +338,5 @@ export default {
   }
 }
 
-.interactive-slider {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow:hidden;
-  z-index: 50;
-  .swiper-slide-prev, .swiper-slide-next  {
-    .tier {
-      opacity: 1;
-    //  padding: 0;
-    }
-  }
-  .swiper-slide-prev {
-    right: 0;
-  }
-  .swiper-slide-next {
-    left: 0;
-  }
-  .swiper-slide-active {
-  }
-    .slide-interactive {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      .tier {}
-    }
-}
 
 </style>

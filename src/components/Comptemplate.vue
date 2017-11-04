@@ -6,7 +6,8 @@
 export default {
   mixins: [],
   name: '',
-  props: [],
+  props: [''],
+  components: { },
   data() {
     return {
 

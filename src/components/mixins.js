@@ -12,17 +12,26 @@ export default {
       for (i = 0; i < arr.length; i += 1) {
            action(arr[i]);
         }
-      },
-      addZero(number) {
-        return (number < 10) ? '0' + number.toString() : number.toString();
-      },
+    },
+    addZero(number) {
+      return (number < 10) ? '0' + number.toString() : number.toString();
+    },
+    addTwoZeroes(num) {
+      if (num < 10) {
+        return ('00' + num.toString());
+      }
+      else if (num > 10 && num < 100) {
+        return ('0' + num.toString());
+      }
+        return (num.toString());
+    },
   },
   computed: {
     panelBgArt() {
-      return require('../assets/images/' + this.panel.name + '.jpg');
+     return require('../assets/images/art/story/chapter/scenes/' + this.sceneNumber + '/' + this.panelName + '.jpg');
     },
     animAssetArt() {
-      return require('../assets/images/' + this.animAsset);
+      return require('../assets/images/art/story/chapter/scenes/' + this.sceneNumber + '/' + this.animAsset);
     },
 
   },
