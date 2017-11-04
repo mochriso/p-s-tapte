@@ -104,62 +104,107 @@ export default {
                   ],
                 },
                 { type: 'interactive',
-                  interactionContext: ['panel', 'panel', 'panel'],
+                  rows: [],
+                  interactionSteps: [
+                    { interactions: [
+                        { gesture: 'swipe',
+                          animation: {
+                            behaviour: 'swipeInFlyOut',
+                            axis: 'X',
+                            direction: 'opposite',
+                          },
+                          interactionItem: {
+                            animAsset: 't04-int_el0.png',
+                          },
+                        },
+                      ],
+                      rows: [
+                      { panels: [
+                        { type: 'static',
+                          position: 'center bottom',
+                          swap: true,
+                        },
+                      ] },
+                      { panels: [
+                        { type: 'static',
+                          position: 'center bottom',
+                          swap: false,
+                        },
+                      ] },
+                      { panels: [
+                        { type: 'static',
+                          position: 'center bottom',
+                          swap: false,
+                        },
+                      ] },
+                    ],
+                  },
+                  { interactions: [
+                      { gesture: 'swipe',
+                        animation: {
+                          behaviour: 'swipeInFlyOut',
+                          axis: 'X',
+                          direction: 'normal',
+                        },
+                        interactionItem: {
+                          animAsset: 't04-int_el0.png',
+                        },
+                      },
+                    ],
+                    rows: [
+                    { panels: [
+                      { type: 'static',
+                        position: 'center bottom',
+                        swap: false,
+                      },
+                    ] },
+                    { panels: [
+                      { type: 'static',
+                        position: 'center bottom',
+                        swap: true,
+                      },
+                    ] },
+                    { panels: [
+                      { type: 'static',
+                        position: 'center bottom',
+                        swap: false,
+                      },
+                    ] },
+                  ],
+                },
+                { interactions: [
+                    { gesture: 'swipe',
+                      animation: {
+                        behaviour: 'swipeInFlyOut',
+                        axis: 'X',
+                        direction: 'opposite',
+                      },
+                      interactionItem: {
+                        animAsset: 't04-int_el0.png',
+                      },
+                    },
+                  ],
                   rows: [
-                    { panels: [
-                      { type: 'static',
-                        position: 'center bottom',
-                        interactions: [
-                          { interactionIndex: 0,
-                            gesture: 'swipe',
-                            animation: {
-                              behaviour: 'swipeInFlyOut',
-                              axis: 'X',
-                              direction: 'opposite',
-                            },
-                            interactionItem: {
-                              animAsset: 't04-int_el0.png',
-                            },
-                          },
-                        ],
-                      },
-                    ] },
-                    { panels: [
-                      { type: 'static',
-                        position: 'center bottom',
-                        interactions: [
-                          { interactionIndex: 1,
-                            gesture: 'swipe',
-                            animation: {
-                              behaviour: 'swipeInFlyOut',
-                              axis: 'X',
-                              direction: 'opposite',
-                            },
-                            interactionItem: {
-                              animAsset: 't04-int_el0.png',
-                            },
-                          },
-                        ],
-                      },
-                    ] },
-                    { panels: [
-                      { type: 'static',
-                        position: 'center bottom',
-                        interactions: [
-                          { interactionIndex: 2,
-                            gesture: 'swipe',
-                            animation: {
-                              behaviour: 'swipeInFlyOut',
-                              axis: 'X',
-                              direction: 'opposite',
-                            },
-                            interactionItem: {
-                              animAsset: 't04-int_el0.png',
-                            },
-                          },
-                        ],
-                      },
-                    ] },
+                  { panels: [
+                    { type: 'static',
+                      position: 'center bottom',
+                      swap: false,
+                    },
+                  ] },
+                  { panels: [
+                    { type: 'static',
+                      position: 'center bottom',
+                      swap: false,
+                    },
+                  ] },
+                  { panels: [
+                    { type: 'static',
+                      position: 'center bottom',
+                      swap: true,
+                    },
+                  ] },
+                ],
+              },
                   ],
                 },
                 { type: 'static',
@@ -176,34 +221,66 @@ export default {
                   ],
                 },
                 { type: 'interactive',
-                interactionContext: ['panel'],
+                interactionSteps: [
+                  { interactions: [
+                      { gesture: 'swipe',
+                        animation: {
+                          behaviour: 'swipeInFlyOut',
+                          axis: 'X',
+                          direction: 'opposite',
+                        },
+                        interactionItem: {
+                          animAsset: 't06-r1-p0-spr.jpg',
+                        },
+                      },
+                    ],
+                    rows: [
+                      { panels: [
+                        { type: 'animated',
+                        effect: 'zoomoutonce',
+                        visible: true,
+                        position: '-73%, -72%',
+                        swap: false,
+                       },
+                      ] },
+                      { panels: [
+                        {
+                          type: 'static',
+                          position: 'center top',
+                          swap: true,
+                        },
+                      ] },
+                    ],
+                  },
+                  { interactions: [
+                      { gesture: 'none',
+                        animation: {
+                          behaviour: 'fadeToBlack',
+                          axis: 'X',
+                          direction: 'opposite',
+                        },
+                        interactionItem: {
+                          animAsset: 't06-r1-p0-spr.jpg',
+                        },
+                      },
+                    ],
+                    rows: [
+                      { panels: [
+                        { type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
+                      ] },
+                      { panels: [
+                        {
+                          type: 'static',
+                          position: 'center top',
+                        },
+                      ] },
+                    ],
+                  },
+                ],
                   animation: {
                     effect: 'fadeToBlack',
                   },
-                  rows: [
-                    { panels: [
-                      { type: 'animated', effect: 'zoomoutonce', visible: true, position: '-73%, -72%' },
-                    ] },
-                    { panels: [
-                      {
-                        type: 'static',
-                        position: 'center top',
-                        interactions: [
-                          { interactionIndex: 0,
-                            gesture: 'swipe',
-                            animation: {
-                              behaviour: 'swipeInFlyOut',
-                              axis: 'X',
-                              direction: 'opposite',
-                            },
-                            interactionItem: {
-                              animAsset: 't06-r1-p0-spr.jpg',
-                            },
-                          },
-                        ],
-                      },
-                    ] },
-                    ],
+
                 },
               ],
             },
