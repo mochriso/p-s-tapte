@@ -1,38 +1,46 @@
 <template lang="html">
 <div class="sliding-container">
   <swiper :options="mainSliderOption" ref="mainSlider" class="main-slider" v-for="(item,index) in story" key="item.id">
-    <swiper-slide class="slide-main" v-for="(item,index) in tierArray" key="item.id">
-      <template v-if="item.type === 'interactive'">
-        <interactive-slider
-        :interactionContext="item.interactionContext"
-        :tierIndex="index"
-        :mainActiveIndex="activeIndex"
-        :key="item.id">
-        </interactive-slider>
-        <tier :key="item.id"
-        :interactionContext="item.interactionContext"
-        :tier="item"
-        :tierIndex="index"
-        :activeIndex="activeIndex"
-        :type="item.type"
-        :rows="item.rows"
-        :intTierArray="intTierArray"
-        :tiernr="addZero(index+1)">
-        </tier>
+    <template v-for="(item,index) in story.chapters">
+      <template v-for="(scene,index) in item.scenes">
+        <swiper-slide class="slide-main" :sceneIndex="scene.number" v-for="(item,index) in scene.tiers" key="item.id">
+          <template scope="slideProps">
+          <template v-if="item.type === 'interactive'">
+            <interactive-slider
+            :interactionContext="item.interactionContext"
+            :tierIndex="index"
+            :mainActiveIndex="activeIndex"
+            :key="item.id">
+            </interactive-slider>
+            <tier :key="item.id"
+            :panelArray="panelArray"
+            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :interactionContext="item.interactionContext"
+            :tier="item"
+            :tierIndex="index"
+            :activeIndex="activeIndex"
+            :type="item.type"
+            :rows="item.rows"
+            :tierName="('t' + addZero(index))">
+            </tier>
+          </template>
+          <template v-else>
+            <tier
+            :panelArray="panelArray"
+            :key="item.id"
+            :tier="item"
+            :tierIndex="index"
+            :activeIndex="activeIndex"
+            :type="item.type"
+            :rows="item.rows"
+            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :tierName="('t' + addZero(index))">
+            </tier>
+          </template>
+        </template>
+          </swiper-slide>
+        </template>
       </template>
-      <template v-else>
-        <tier
-        :key="item.id"
-        :tier="item"
-        :tierIndex="index"
-        :activeIndex="activeIndex"
-        :type="item.type"
-        :rows="item.rows"
-        :intTierArray="intTierArray"
-        :tiernr="addZero(index+1)">
-        </tier>
-      </template>
-      </swiper-slide>
   </swiper>
 </div>
 </template>
@@ -97,6 +105,23 @@ export default {
       });
       return allTiers;
     },
+    panelArray() {
+      const allPanels = [];
+//    this.story.chapters.forEach((obj) => {
+//      obj.scenes.forEach((sco) => {
+//         sco.tiers
+      this.tierArray.forEach((to) => {
+             to.rows.forEach((ro) => {
+               ro.panels.forEach((po) => {
+                 allPanels.push(po);
+               });
+             });
+           });
+//        });
+//      });
+      return allPanels;
+    },
+
     // returns the type value of the current active tier, as string
     activeType() {
       const tArr = this.tierArray;
@@ -135,6 +160,31 @@ export default {
     },
   },
   methods: {
+    tierIndex(sceneInd) {
+      const sceneTiers = [];
+      this.story.chapters.forEach((obj) => {
+        obj.scenes.forEach((o) => {
+          if (obj.scenes.indexOf(o) === sceneInd) {
+            o.tiers.forEach((yo) => {
+             sceneTiers.push(yo);
+            });
+          }
+        });
+      });
+      return sceneTiers;
+    },
+    SceneIndex() {
+      const scenesArr = [];
+      this.story.chapters.forEach((obj) => {
+        obj.scenes.forEach((o) => {
+          scenesArr.push(o);
+        });
+      });
+      scenesArr.forEach((t) => {
+
+      });
+      return scenes;
+    },
     // sets the component activeIndex numeric value as equal to the main swiper object activeIndex
     setActiveIndex() {
       this.activeIndex = this.mainSwiper.activeIndex;

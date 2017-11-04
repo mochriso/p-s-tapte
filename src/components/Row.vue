@@ -1,6 +1,20 @@
 <template lang="html">
-  <div :style="{ 'flex-grow': row.grow }" :class="['row', rownr]">
-    <slot>
+  <div :style="{ 'flex-grow': row.grow }" :class="['row', rowName]">
+    <template v-if="this.row.interactions">
+      <interaction v-for="item in this.row.interactions"
+      :key="item.id"
+      :type="item.animation.behaviour"
+      :interactionIndex="item.interactionIndex"
+      :animation="item.animation"
+      :interactionItem="item.interactionItem"
+      :tierIndex="this.tierIndex"
+      :mainActiveIndex="this.activeIndex"
+      :interactionContext="this.interactionContext"
+      :sceneNumber="sceneNumber"
+      ref="rowInteraction">
+      </interaction>
+    </template>
+    <slot name ="panel" :rowName="this.rowName">
     </slot>
   </div>
 </template>
@@ -9,7 +23,7 @@
 export default {
   mixins: [],
   name: 'row',
-  props: ['row', 'rownr'],
+  props: ['row', 'rowName', 'tierIndex', 'activeIndex', 'interactionContext', 'sceneNumber'],
   data() {
     return {
 
