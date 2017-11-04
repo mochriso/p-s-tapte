@@ -14,7 +14,7 @@
   :animation="this.animation"
   class="touch-behaviour"
   :class="this.type">
-    <interaction-item :animAsset="this.interactionItem.animAsset">
+    <interaction-item :sceneNumber="this.sceneNumber" :animAsset="this.interactionItem.animAsset">
     </interaction-item>
   </component>
 </template>
@@ -58,6 +58,9 @@ export default {
     },
     animation: {
       type: Object,
+    },
+    sceneNumber: {
+      type: String,
     },
   },
   data() {

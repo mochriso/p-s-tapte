@@ -1,5 +1,5 @@
 <template lang="html">
-  <div :class="['tier', tiernr, type]">
+  <div :class="['tier', sceneNumber, tierName, type]">
     <slot>
     </slot>
     <template v-if="tier.interactions">
@@ -12,24 +12,27 @@
       :tierIndex="tierIndex"
       :mainActiveIndex="activeIndex"
       :interactionContext="interactionContext"
+      :sceneNumber="sceneNumber"
       ref="interaction">
       </interaction>
     </template>
-    <row v-for="(item, index) in rows" :key="item.id" :row="item" :rownr="addZero(index+1)">
-      <template v-if="item.interactions">
-        <interaction v-for="item in item.interactions"
+    <row v-for="(item, index) in rows"
+    :key="item.id"
+    :row="item"
+    :rowName="(tierName + '-r' + index)"
+    :tierIndex="tierIndex"
+    :sceneNumber="sceneNumber"
+    :mainActiveIndex="activeIndex"
+    :interactionContext="interactionContext">
+      <template slot="panel" scope="naming">
+        <panel v-for="(item, index) in item.panels"
         :key="item.id"
-        :type="item.animation.behaviour"
-        :interactionIndex="item.interactionIndex"
-        :animation="item.animation"
-        :interactionItem="item.interactionItem"
-        :tierIndex="tierIndex"
-        :mainActiveIndex="activeIndex"
-        :interactionContext="interactionContext"
-        ref="interaction">
-        </interaction>
-      </template>
-        <panel v-for="(item, index) in item.panels" :key="item.id" :panel="item" :type="item.type">
+        :panel="item"
+        :type="item.type"
+        :panelName="(naming.rowName + '-p' + index)"
+        :panelArray="panelArray"
+        :sceneNumber="sceneNumber"
+        ref="panel">
           <template v-if="item.interactions">
             <interaction v-for="item in item.interactions"
             :key="item.id"
@@ -40,10 +43,12 @@
             :tierIndex="tierIndex"
             :mainActiveIndex="activeIndex"
             :interactionContext="interactionContext"
+            :sceneNumber="sceneNumber"
             ref="interaction">
             </interaction>
           </template>
         </panel>
+      </template>
     </row>
   </div>
 </template>
@@ -62,12 +67,21 @@ import addZero from './mixins';
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['type', 'rows', 'tiernr', 'activeIndex', 'tier', 'intTierArray', 'tierIndex', 'interactionContext'],
+  props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'interactionContext', 'sceneNumber', 'panelArray'],
   data() {
     return {
     };
   },
   computed: {
+    panelsInTierArr() {
+      const panArr = [];
+      this.tier.rows.forEach((ro) => {
+               ro.panels.forEach((po) => {
+                 panArr.push(po);
+               });
+           });
+      return panArr;
+    },
     // interactionsArray() {
     //   const itArr = this.intTierArray;
     //   const allInteractions = [];
@@ -121,6 +135,8 @@ export default {
   },
   created() {
 
+  },
+  beforeMount() {
   },
   mounted() {
   //  this.emitEveryType();

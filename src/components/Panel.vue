@@ -1,7 +1,7 @@
 <template lang="html">
-  <div class="panel" :class="[panel.name, panel.type]" :style="styler('wrap')">
+  <div class="panel" :class="[this.panelName, panel.type]" :style="styler('wrap')">
     <slot></slot>
-    <img :class="panel.effect" :style="styler('img')" :src="panelBgArt" :alt="panel.name">
+    <img :class="panel.effect" :style="styler('img')" :src="panelBgArt" :alt="this.panelName">
   </div>
 
 </template>
@@ -11,12 +11,14 @@
 // 'transform': 'translate('+panel.position+')',
 // :style="{ 'min-width': panel.size, 'min-height': panel.size }"
 // 'object-position': panel.position
+import addTwoZeroes from './mixins';
+
 import panelBgArt from './mixins';
 
 export default {
-  mixins: [panelBgArt],
+  mixins: [panelBgArt, addTwoZeroes],
   name: 'panel',
-  props: ['panel', 'panelnr', 'name', 'type', 'effect', 'overlay'],
+  props: ['panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber'],
   data() {
     return {
       styles: [
@@ -49,7 +51,7 @@ export default {
      });
      return returnArr[0];
     },
-
+    // returns array with all tier objects
   },
   created() {
 

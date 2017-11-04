@@ -10,7 +10,7 @@ import animAssetArt from './mixins';
 export default {
   mixins: [animAssetArt],
   name: 'interaction-item',
-  props: ['animAsset'],
+  props: ['animAsset', 'sceneNumber'],
   data() {
     return {
       // interactivity: {
