@@ -4,7 +4,6 @@
       <interaction v-for="item in this.row.interactions"
       :key="item.id"
       :type="item.animation.behaviour"
-      :interactionIndex="item.interactionIndex"
       :animation="item.animation"
       :interactionItem="item.interactionItem"
       :tierIndex="this.tierIndex"

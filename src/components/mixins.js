@@ -27,8 +27,11 @@ export default {
     },
   },
   computed: {
-    panelBgArt() {
+    panelArt() {
      return require('../assets/images/art/story/chapter/scenes/' + this.sceneNumber + '/' + this.panelName + '.jpg');
+    },
+    swappedPanelArt() {
+     return require('../assets/images/art/story/chapter/scenes/' + this.sceneNumber + '/' + this.panelName + '-n.jpg');
     },
     animAssetArt() {
       return require('../assets/images/art/story/chapter/scenes/' + this.sceneNumber + '/' + this.animAsset);

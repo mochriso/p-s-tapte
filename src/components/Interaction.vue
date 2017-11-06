@@ -2,7 +2,6 @@
   <component
   :is="activeComponent"
   v-show="showInt"
-  :interactionIndex="interactionIndex"
   :translateVal="translateVal"
   :movingFwdVal="movingFwdVal"
   :movingBwdVal="movingBwdVal"
@@ -28,11 +27,15 @@ import InteractionItem from './InteractionItem';
 
 import SwipeInFlyOut from './interactions/SwipeInFlyOut';
 
+import FadeToBlack from './interactions/FadeToBlack';
+
+
 export default {
   name: 'interaction',
   components: {
     InteractionItem,
     SwipeInFlyOut,
+    FadeToBlack,
   },
   props: {
     type: {
@@ -41,10 +44,14 @@ export default {
     },
     interactionIndex: {
       type: Number,
-      required: true,
+      required: false,
     },
     interactionContext: {
       type: Array,
+    },
+    stepIndex: {
+      type: Number,
+      required: false,
     },
     tierIndex: {
       type: Number,

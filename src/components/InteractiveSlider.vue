@@ -1,15 +1,25 @@
 <template lang="html">
     <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
-      <swiper-slide class="slide-interactive">
-      </swiper-slide>
-      <template v-for="item in interactionContext">
-        <swiper-slide class="slide-interactive">
+        <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
+          <tier
+          :sceneNumber="sceneNumber"
+          :step="item"
+          :stepIndex="index"
+          :tierIndex="tierIndex"
+          :mainActiveIndex="mainActiveIndex"
+          :type="type"
+          :rows="item.rows"
+          :stepName="('st' + index)"
+          :tierName="('t' + addZero(tierIndex))">
+          </tier>
         </swiper-slide>
-      </template>
     </swiper>
 </template>
 
 <script>
+
+import Tier from './Tier';
+
 import { IntEventbus } from './inteventbus';
 
 import { MainEventbus } from './maineventbus';
@@ -23,8 +33,8 @@ import iterate from './mixins';
 export default {
   mixins: [addZero, iterate, same],
   name: 'interactive-slider',
-  props: ['tierIndex', 'mainActiveIndex', 'interactionContext'],
-  components: { },
+  props: ['tierIndex', 'mainActiveIndex', 'sequentialSteps', 'sceneNumber', 'tierIndex', 'type'],
+  components: { Tier },
   data() {
     return {
     //  areInteractionsDone: false,
@@ -33,6 +43,8 @@ export default {
         notNextTick: true,
         nested: true,
     //  virtualTranslate: true,
+        effect: 'fade',
+        speed: 10,
         spaceBetween: 0,
         slidesPerView: 'auto',
         centeredSlides: false,

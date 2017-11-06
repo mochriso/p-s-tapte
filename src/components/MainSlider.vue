@@ -7,25 +7,17 @@
           <template scope="slideProps">
           <template v-if="item.type === 'interactive'">
             <interactive-slider
-            :interactionContext="item.interactionContext"
+            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :sequentialSteps="item.sequentialSteps"
             :tierIndex="index"
             :mainActiveIndex="activeIndex"
+            :type="item.type"
             :key="item.id">
             </interactive-slider>
-            <tier :key="item.id"
-            :panelArray="panelArray"
-            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
-            :interactionContext="item.interactionContext"
-            :tier="item"
-            :tierIndex="index"
-            :activeIndex="activeIndex"
-            :type="item.type"
-            :rows="item.rows"
-            :tierName="('t' + addZero(index))">
-            </tier>
           </template>
           <template v-else>
             <tier
+            :class="[sceneNumber(slideProps.sceneIndex), ('t' + addZero(index)), item.type]"
             :panelArray="panelArray"
             :key="item.id"
             :tier="item"
@@ -33,7 +25,7 @@
             :activeIndex="activeIndex"
             :type="item.type"
             :rows="item.rows"
-            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :sceneNumber="sceneNumber(slideProps.sceneIndex)"
             :tierName="('t' + addZero(index))">
             </tier>
           </template>
@@ -60,8 +52,6 @@ import InteractiveSlider from './InteractiveSlider';
 import Tier from './Tier';
 
 import addZero from './mixins';
-
-import same from './mixins';
 
 import iterate from './mixins';
 
@@ -160,6 +150,9 @@ export default {
     },
   },
   methods: {
+    sceneNumber(scInd) {
+      return ('s' + this.addZero(scInd));
+    },
     tierIndex(sceneInd) {
       const sceneTiers = [];
       this.story.chapters.forEach((obj) => {

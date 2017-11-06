@@ -1,7 +1,12 @@
 <template lang="html">
   <div class="panel" :class="[this.panelName, panel.type]" :style="styler('wrap')">
     <slot></slot>
-    <img :class="panel.effect" :style="styler('img')" :src="panelBgArt" :alt="this.panelName">
+    <template v-if="panel.swapped">
+      <img :class="panel.effect" :style="styler('img')" :src="swappedPanelArt" :alt="this.panelName">
+    </template>
+    <template v-else>
+      <img :class="panel.effect" :style="styler('img')" :src="panelArt" :alt="this.panelName">
+    </template>
   </div>
 
 </template>
@@ -13,10 +18,12 @@
 // 'object-position': panel.position
 import addTwoZeroes from './mixins';
 
-import panelBgArt from './mixins';
+import panelArt from './mixins';
+
+import swappedPanelArt from './mixins';
 
 export default {
-  mixins: [panelBgArt, addTwoZeroes],
+  mixins: [panelArt, swappedPanelArt, addTwoZeroes],
   name: 'panel',
   props: ['panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber'],
   data() {

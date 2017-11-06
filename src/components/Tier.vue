@@ -1,12 +1,13 @@
 <template lang="html">
-  <div :class="['tier', sceneNumber, tierName, type]">
-    <slot>
+  <div class="tier">
+    <slot name="tierRender">
     </slot>
-    <template v-if="tier.interactions">
-      <interaction v-for="item in tier.interactions"
+    <slot name="interactive">
+    </slot>
+    <template v-if="type === 'interactive'">
+      <interaction v-for="item in step.interactions"
       :key="item.id"
       :type="item.animation.behaviour"
-      :interactionIndex="item.interactionIndex"
       :animation="item.animation"
       :interactionItem="item.interactionItem"
       :tierIndex="tierIndex"
@@ -24,12 +25,12 @@
     :sceneNumber="sceneNumber"
     :mainActiveIndex="activeIndex"
     :interactionContext="interactionContext">
-      <template slot="panel" scope="naming">
+      <template slot="panel" scope="rowProps">
         <panel v-for="(item, index) in item.panels"
         :key="item.id"
         :panel="item"
         :type="item.type"
-        :panelName="(naming.rowName + '-p' + index)"
+        :panelName="(rowProps.rowName + '-p' + index)"
         :panelArray="panelArray"
         :sceneNumber="sceneNumber"
         ref="panel">
@@ -37,7 +38,6 @@
             <interaction v-for="item in item.interactions"
             :key="item.id"
             :type="item.animation.behaviour"
-            :interactionIndex="item.interactionIndex"
             :animation="item.animation"
             :interactionItem="item.interactionItem"
             :tierIndex="tierIndex"
@@ -54,7 +54,6 @@
 </template>
 
 <script>
-// :interactionIndex="yourIndex(item)"
 
 import Row from './Row';
 
@@ -67,7 +66,7 @@ import addZero from './mixins';
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'interactionContext', 'sceneNumber', 'panelArray'],
+  props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'interactionContext', 'sceneNumber', 'panelArray', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
   data() {
     return {
     };
