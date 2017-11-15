@@ -73,7 +73,7 @@ export default {
         height: inherit;
         overflow: hidden;
         border-style: solid;
-        border-width: 2px;
+        border-width: 3px;
         border-color: #333333;
         position:relative;
 

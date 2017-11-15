@@ -69,6 +69,7 @@ export default {
   props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'interactionContext', 'sceneNumber', 'panelArray', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
   data() {
     return {
+      slideIndex: '',
     };
   },
   computed: {
@@ -149,9 +150,12 @@ export default {
 
 <style lang="scss">
 .tier {
+  box-sizing: border-box;
   margin: 0;
-  padding-left: 2.5%;
-  padding-right: 2.5%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  padding-left: 3%;
+  padding-right: 3%;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -160,6 +164,7 @@ export default {
   justify-content: space-between;
   align-content: stretch;
   align-items: stretch;
+  width: 100%;
   height: 100%;
 }
 

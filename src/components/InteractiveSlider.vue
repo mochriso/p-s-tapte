@@ -1,4 +1,5 @@
 <template lang="html">
+  <div>
     <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
         <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
           <tier
@@ -14,6 +15,7 @@
           </tier>
         </swiper-slide>
     </swiper>
+  </div>
 </template>
 
 <script>
@@ -38,13 +40,14 @@ export default {
   data() {
     return {
     //  areInteractionsDone: false,
+      slideIndex: '',
       progressVal: '',
       interactiveSliderOption: {
         notNextTick: true,
         nested: true,
-    //  virtualTranslate: true,
+        virtualTranslate: true,
         effect: 'fade',
-        speed: 10,
+        speed: 0,
         spaceBetween: 0,
         slidesPerView: 'auto',
         centeredSlides: false,
@@ -57,42 +60,18 @@ export default {
   watch: {
     isMainActiveSlide() {
       if (this.isMainActiveSlide) {
-        this.$emit('is-main-active-slide', this.tierIndex);
+        this.$emit('is-main-active-slide', this.slideIndex);
       }
     },
   },
   computed: {
     isMainActiveSlide() {
-      if (this.mainActiveIndex === this.tierIndex) {
+      if (this.mainActiveIndex === this.slideIndex) {
         return true;
       }
       return false;
     },
-    // returns array of the INDEXES of all interactive tiers
-    // interactiveIndArr() {
-    //    const tArr = this.tierArray;
-    //    const allInteractives = [];
-    //      let i;
-    //      for (i = 0; i < tArr.length; i += 1) {
-    //        if (tArr[i].type === 'interactive') {
-    //          allInteractives.push(tArr.indexOf(tArr[i]));
-    //        }
-    //      }
-    //     return allInteractives;
-    // },
-    // returns an OBJECT with all interactive tier indexes as numeric keys
-    // and their respective sub-sliders' swiper objects as values
-    // intSwipersObject() {
-    //     const values = this.$refs.interactiveSlider;
-    //     const keys = this.interactiveIndArr;
-    //      const intObj = [];
-    //      const obj = {};
-    //      for (let i = 0; i < values.length; i += 1) {
-    //           obj[keys[i]] = values[i];
-    //           }
-    //      intObj.push(obj);
-    //      return intObj[0];
-    // },
+
     intSwiper() {
       return this.$refs.interactiveSlider.swiper;
     },
@@ -118,6 +97,9 @@ export default {
     //         setTimeout(resetSwiper, 10);
     //     });
 
+    theSwipa.on('transitionEnd', (swiper, sliderMove) => {
+      console.log('slide next');
+    });
 
     this.$on('is-main-active-slide', (tierIndex) => {
       console.log('interactiveSlide component: is main active slide', tierIndex);

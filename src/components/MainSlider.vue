@@ -6,14 +6,15 @@
         <swiper-slide class="slide-main" :sceneIndex="scene.number" v-for="(item,index) in scene.tiers" key="item.id">
           <template scope="slideProps">
           <template v-if="item.type === 'interactive'">
-            <interactive-slider
-            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
-            :sequentialSteps="item.sequentialSteps"
-            :tierIndex="index"
-            :mainActiveIndex="activeIndex"
-            :type="item.type"
-            :key="item.id">
-            </interactive-slider>
+              <interactive-slider
+              :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+              :sequentialSteps="item.sequentialSteps"
+              :tierIndex="index"
+              :mainActiveIndex="activeIndex"
+              :type="item.type"
+              :key="item.id"
+              ref="interactiveSlider">
+              </interactive-slider>
           </template>
           <template v-else>
             <tier
@@ -26,7 +27,8 @@
             :type="item.type"
             :rows="item.rows"
             :sceneNumber="sceneNumber(slideProps.sceneIndex)"
-            :tierName="('t' + addZero(index))">
+            :tierName="('t' + addZero(index))"
+            ref="tier">
             </tier>
           </template>
         </template>
@@ -138,6 +140,18 @@ export default {
          // console.log(allInteractives);
         return allInt;
     },
+    staticTierArray() {
+       const tArr = this.tierArray;
+       const allInt = [];
+         let i;
+         for (i = 0; i < tArr.length; i += 1) {
+           if (tArr[i].type === 'static') {
+             allInt.push(tArr[i]);
+           }
+         }
+         // console.log(allInteractives);
+        return allInt;
+    },
     // returns array of all tier type values
     typeArray() {
       const allTypes = [];
@@ -149,7 +163,20 @@ export default {
       return allTypes;
     },
   },
+
   methods: {
+    // returns array of the INDEXES of all  tiers of given type
+    tTypeIndArr(tType) {
+       const tArr = this.tierArray;
+       const allOfType = [];
+         let i;
+         for (i = 0; i < tArr.length; i += 1) {
+           if (tArr[i].type === tType) {
+             allOfType.push(tArr.indexOf(tArr[i]));
+           }
+         }
+        return allOfType;
+    },
     sceneNumber(scInd) {
       return ('s' + this.addZero(scInd));
     },
@@ -202,7 +229,30 @@ export default {
   },
   mounted() {
     this.setActiveIndex();
-    // console.log(this.$refs.interaction);
+    const self = this;
+
+
+    // returns an OBJECT with all interactive tier indexes as numeric keys
+    // and their respective sub-sliders' swiper objects as values
+    function pushIntSlideIndex() {
+      const sliders = self.$refs.interactiveSlider;
+      const indexes = self.tTypeIndArr('interactive');
+      for (let i = 0; i < sliders.length; i += 1) {
+         sliders[i].slideIndex = indexes[i];
+      }
+    }
+    pushIntSlideIndex();
+
+    function pushStaticSlideIndex() {
+      const sliders = self.$refs.tier;
+      const indexes = self.tTypeIndArr('static');
+      for (let i = 0; i < sliders.length; i += 1) {
+         sliders[i].slideIndex = indexes[i];
+      }
+    }
+    pushStaticSlideIndex();
+
+   console.log(self.tTypeIndArr('interactive'));
 
 //     console.log(this.typeArray);
 //     const allIntIndexes = [];
@@ -228,34 +278,40 @@ export default {
   // 'swiper active index:', this.mainSwiper.activeIndex);
   //  });
 
+// EXPERIMENT: SET activeIndex THROUGH setTranslate
+   self.mainSwiper.on('transitionStart', () => {
+     if (self.mainSwiper.activeIndex !== self.activeIndex) {
+       self.setActiveIndex();
+       MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
+     }
+   });
 // TIMING FUNCTIONS AND TOUCH EVENTS TO SET aI AND PROPERLY CHECK IF aI HAS changed
-   const self = this;
    let theInterval;
 
-   function clearRepeatedCheck() {
-     clearInterval(theInterval);
-   }
-   function isItAnimating(callback) {
-     if (self.mainSwiper.animating) {
-         console.log('still moving');
-      }
-      else {
-        self.setActiveIndex();
-        MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
-// console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:',
-// self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
-        clearRepeatedCheck();
-      }
-    }
-    function repeatedCheck() {
-      theInterval = setInterval(isItAnimating, 50);
-    }
-   this.mainSwiper.on('touchEnd', (swiper) => {
-     repeatedCheck();
-   });
-   this.mainSwiper.on('touchStart', (swiper) => {
-     clearRepeatedCheck();
-   });
+//    function clearRepeatedCheck() {
+//      clearInterval(theInterval);
+//    }
+//    function isItAnimating(callback) {
+//      if (self.mainSwiper.animating) {
+//          console.log('still moving');
+//       }
+//       else {
+//         self.setActiveIndex();
+//         MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
+// // console.log('touchEnd', 'data active index:', self.activeIndex, 'swiper active index:',
+// // self.mainSwiper.activeIndex, 'emmiting type', self.activeType);
+//         clearRepeatedCheck();
+//       }
+//     }
+//     function repeatedCheck() {
+//       theInterval = setInterval(isItAnimating, 50);
+//     }
+//    this.mainSwiper.on('touchEnd', (swiper) => {
+//      repeatedCheck();
+//    });
+//    this.mainSwiper.on('touchStart', (swiper) => {
+//      clearRepeatedCheck();
+//    });
 
 // TOGGLE MAINSLIDER LOCK ON SPECIAL INTERACTIVITY
 
@@ -308,9 +364,9 @@ export default {
 .main-slider {
   position: relative;
   width: 100%;
-  height: 96%;
+  height: 100%;
   margin: 0;
-  padding: 4% 0 0 0;
+  padding: 0;
   overflow:hidden;
   z-index: 30;
   .swiper-slide-prev, .swiper-slide-next  {
@@ -318,16 +374,18 @@ export default {
       opacity: 0.6;
     }
   }
-  .swiper-slide-prev {
-    right: -1.5%;
-  }
-  .swiper-slide-next {
-    left: -1.5%;
-  }
+  // .swiper-slide-prev {
+  //   right: -3.5%;
+  // }
+  // .swiper-slide-next {
+  //   left: -3.5%;
+  // }
+
   .slide-main {
-    width: 97%;
-    // margin-left: 0.5%;
-    // margin-right: 0.5%;
+    width: 100%;
+    margin-left: -1.75%;
+    margin-right: -1.75%;
+
   }
 }
 
