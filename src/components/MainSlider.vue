@@ -23,7 +23,7 @@
             :key="item.id"
             :tier="item"
             :tierIndex="index"
-            :activeIndex="activeIndex"
+            :mainActiveIndex="activeIndex"
             :type="item.type"
             :rows="item.rows"
             :sceneNumber="sceneNumber(slideProps.sceneIndex)"
@@ -75,6 +75,7 @@ export default {
         watchSlidesProgress: true,
         watchSlidesVisibility: true,
         autoplay: false,
+        speed: 175,
         // For testing only:
         keyboardControl: true,
       },

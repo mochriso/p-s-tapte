@@ -25,7 +25,7 @@ import swappedPanelArt from './mixins';
 export default {
   mixins: [panelArt, swappedPanelArt, addTwoZeroes],
   name: 'panel',
-  props: ['panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber'],
+  props: ['panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex'],
   data() {
     return {
       styles: [

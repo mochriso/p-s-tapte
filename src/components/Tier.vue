@@ -11,7 +11,7 @@
       :animation="item.animation"
       :interactionItem="item.interactionItem"
       :tierIndex="tierIndex"
-      :mainActiveIndex="activeIndex"
+      :mainActiveIndex="mainActiveIndex"
       :interactionContext="interactionContext"
       :sceneNumber="sceneNumber"
       ref="interaction">
@@ -23,7 +23,7 @@
     :rowName="(tierName + '-r' + index)"
     :tierIndex="tierIndex"
     :sceneNumber="sceneNumber"
-    :mainActiveIndex="activeIndex"
+    :mainActiveIndex="mainActiveIndex"
     :interactionContext="interactionContext">
       <template slot="panel" scope="rowProps">
         <panel v-for="(item, index) in item.panels"
@@ -41,7 +41,7 @@
             :animation="item.animation"
             :interactionItem="item.interactionItem"
             :tierIndex="tierIndex"
-            :mainActiveIndex="activeIndex"
+            :mainActiveIndex="mainActiveIndex"
             :interactionContext="interactionContext"
             :sceneNumber="sceneNumber"
             ref="interaction">

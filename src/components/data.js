@@ -115,6 +115,7 @@ export default {
                       { panels: [
                         { type: 'static',
                           position: 'center bottom',
+                          willSwap: true,
                           swapped: false,
                           animation: {
                             behaviour: 'swipeInFlyOut',
@@ -129,12 +130,14 @@ export default {
                       { panels: [
                         { type: 'static',
                           position: 'center bottom',
+                          willSwap: false,
                           swapped: false,
                         },
                       ] },
                       { panels: [
                         { type: 'static',
                           position: 'center bottom',
+                          willSwap: false,
                           swapped: false,
                         },
                       ] },
@@ -149,12 +152,14 @@ export default {
                     { panels: [
                       { type: 'static',
                         position: 'center bottom',
+                        willSwap: false,
                         swapped: true,
                       },
                     ] },
                     { panels: [
                       { type: 'static',
                         position: 'center bottom',
+                        willSwap: true,
                         swapped: false,
                         animation: {
                           behaviour: 'swipeInFlyOut',
@@ -169,6 +174,7 @@ export default {
                     { panels: [
                       { type: 'static',
                         position: 'center bottom',
+                        willSwap: false,
                         swapped: false,
                       },
                     ] },
@@ -183,18 +189,21 @@ export default {
                   { panels: [
                     { type: 'static',
                       position: 'center bottom',
+                      willSwap: false,
                       swapped: true,
                     },
                   ] },
                   { panels: [
                     { type: 'static',
                       position: 'center bottom',
+                      willSwap: false,
                       swapped: true,
                     },
                   ] },
                   { panels: [
                     { type: 'static',
                       position: 'center bottom',
+                      willSwap: true,
                       swapped: false,
                       animation: {
                         behaviour: 'swipeInFlyOut',
@@ -208,36 +217,26 @@ export default {
                   ] },
                 ],
               },
-              { interaction: [
-                    { gesture: 'swipe',
-                      mapping: 'viewport',
-                    },
-                  ],
-                rows: [
+              { rows: [
                 { panels: [
                   { type: 'static',
                     position: 'center bottom',
+                    willSwap: false,
                     swapped: true,
                   },
                 ] },
                 { panels: [
                   { type: 'static',
                     position: 'center bottom',
+                    willSwap: false,
                     swapped: true,
                   },
                 ] },
                 { panels: [
                   { type: 'static',
                     position: 'center bottom',
+                    willSwap: false,
                     swapped: true,
-                    animation: {
-                      behaviour: 'swipeInFlyOut',
-                      axis: 'X',
-                      direction: 'opposite',
-                    },
-                    interactionItem: {
-                      animAsset: 't04-int_el0.png',
-                    },
                   },
                 ] },
               ],
@@ -271,6 +270,7 @@ export default {
                           effect: 'zoomoutonce',
                           visible: true,
                           position: '-73%, -72%',
+                          willSwap: false,
                           swapped: false,
                          },
                         ] },
@@ -278,6 +278,7 @@ export default {
                           {
                             type: 'static',
                             position: 'center top',
+                            willSwap: true,
                             swapped: false,
                             animation: {
                               behaviour: 'fadeToBlack',
@@ -311,6 +312,7 @@ export default {
                             effect: 'zoomoutonce',
                             visible: true,
                             position: '-73%, -72%',
+                            willSwap: false,
                             swapped: false,
                           },
                       ] },
@@ -318,6 +320,7 @@ export default {
                           {
                             type: 'static',
                             position: 'center top',
+                            willSwap: false,
                             swapped: true,
                           },
                         ] },

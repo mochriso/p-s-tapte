@@ -22,7 +22,7 @@
 export default {
   mixins: [],
   name: 'row',
-  props: ['row', 'rowName', 'tierIndex', 'activeIndex', 'interactionContext', 'sceneNumber'],
+  props: ['row', 'rowName', 'tierIndex', 'activeIndex', 'interactionContext', 'sceneNumber', 'mainActiveIndex'],
   data() {
     return {
 
@@ -73,7 +73,7 @@ export default {
         height: inherit;
         overflow: hidden;
         border-style: solid;
-        border-width: 3px;
+        border-width: 2px;
         border-color: #333333;
         position:relative;
 

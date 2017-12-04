@@ -1,5 +1,20 @@
 <template lang="html">
   <div>
+    <template v-for="(item, index) in sequentialSteps">
+      <template v-if="item.interaction">
+        <div>
+          <interaction
+          :key="item.id"
+
+          :tierIndex="tierIndex"
+          :mainActiveIndex="mainActiveIndex"
+          :interactionContext="interactionContext"
+          :sceneNumber="sceneNumber"
+          ref="interaction">
+          </interaction>
+        </div>
+      </template>
+    </template>
     <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
         <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
           <tier
@@ -19,6 +34,10 @@
 </template>
 
 <script>
+//         :type="item.animation.behaviour"
+//        :animation="item.animation"
+//        :interactionItem="item.interactionItem"
+import Interaction from './Interaction';
 
 import Tier from './Tier';
 
@@ -36,7 +55,7 @@ export default {
   mixins: [addZero, iterate, same],
   name: 'interactive-slider',
   props: ['tierIndex', 'mainActiveIndex', 'sequentialSteps', 'sceneNumber', 'tierIndex', 'type'],
-  components: { Tier },
+  components: { Tier, Interaction },
   data() {
     return {
     //  areInteractionsDone: false,
