@@ -1,55 +1,15 @@
 <template lang="html">
   <div class="tier">
-    <slot name="tierRender">
+    <slot name="row"
+    :tierName="tierName"
+    :tierIndex="tierIndex"
+    :sceneNumber="sceneNumber"
+    :stepIndex="stepIndex">
     </slot>
     <slot name="interactive">
     </slot>
     <template v-if="type === 'interactive'">
-      <interaction v-for="item in step.interactions"
-      :key="item.id"
-      :type="item.animation.behaviour"
-      :animation="item.animation"
-      :interactionItem="item.interactionItem"
-      :tierIndex="tierIndex"
-      :mainActiveIndex="mainActiveIndex"
-      :interactionContext="interactionContext"
-      :sceneNumber="sceneNumber"
-      ref="interaction">
-      </interaction>
     </template>
-    <row v-for="(item, index) in rows"
-    :key="item.id"
-    :row="item"
-    :rowName="(tierName + '-r' + index)"
-    :tierIndex="tierIndex"
-    :sceneNumber="sceneNumber"
-    :mainActiveIndex="mainActiveIndex"
-    :interactionContext="interactionContext">
-      <template slot="panel" scope="rowProps">
-        <panel v-for="(item, index) in item.panels"
-        :key="item.id"
-        :panel="item"
-        :type="item.type"
-        :panelName="(rowProps.rowName + '-p' + index)"
-        :panelArray="panelArray"
-        :sceneNumber="sceneNumber"
-        ref="panel">
-          <template v-if="item.interactions">
-            <interaction v-for="item in item.interactions"
-            :key="item.id"
-            :type="item.animation.behaviour"
-            :animation="item.animation"
-            :interactionItem="item.interactionItem"
-            :tierIndex="tierIndex"
-            :mainActiveIndex="mainActiveIndex"
-            :interactionContext="interactionContext"
-            :sceneNumber="sceneNumber"
-            ref="interaction">
-            </interaction>
-          </template>
-        </panel>
-      </template>
-    </row>
   </div>
 </template>
 
@@ -66,7 +26,7 @@ import addZero from './mixins';
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'interactionContext', 'sceneNumber', 'panelArray', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
+  props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'sceneNumber', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
   data() {
     return {
       slideIndex: '',

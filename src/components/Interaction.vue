@@ -12,8 +12,8 @@
   :cycle="cycle"
   :animation="this.animation"
   class="touch-behaviour"
-  :class="this.type">
-    <interaction-item :sceneNumber="this.sceneNumber" :animAsset="this.interactionItem.animAsset">
+  :class="this.animation.animEvent">
+    <interaction-item :sceneNumber="this.sceneNumber" :animAsset="animAsset">
     </interaction-item>
   </component>
 </template>
@@ -38,16 +38,13 @@ export default {
     FadeToBlack,
   },
   props: {
-    type: {
-      type: String,
+    animation: {
+      type: Object,
       required: true,
     },
     interactionIndex: {
       type: Number,
       required: false,
-    },
-    interactionContext: {
-      type: Array,
     },
     stepIndex: {
       type: Number,
@@ -63,11 +60,12 @@ export default {
     interactionItem: {
       type: Object,
     },
-    animation: {
-      type: Object,
-    },
     sceneNumber: {
       type: String,
+    },
+    animAsset: {
+      type: String,
+      required: true,
     },
   },
   data() {
@@ -76,7 +74,7 @@ export default {
   //    isResponding: false,
   //    sumPlayedInteractions: 0,
       showInt: false,
-      activeComponent: this.type,
+      activeComponent: this.animation.animEvent,
       beginningReached: true,
       endReached: false,
       animatingFwdVal: '',
@@ -97,7 +95,7 @@ export default {
   },
   computed: {
     interactionCount() {
-      return this.interactionContext.length;
+    //  return this.interactionContext.length;
     },
     isMainActiveSlide() {
       if (this.mainActiveIndex === this.tierIndex) {

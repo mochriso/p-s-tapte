@@ -19,7 +19,6 @@
           <template v-else>
             <tier
             :class="[sceneNumber(slideProps.sceneIndex), ('t' + addZero(index)), item.type]"
-            :panelArray="panelArray"
             :key="item.id"
             :tier="item"
             :tierIndex="index"
@@ -29,6 +28,26 @@
             :sceneNumber="sceneNumber(slideProps.sceneIndex)"
             :tierName="('t' + addZero(index))"
             ref="tier">
+              <template slot="row" scope="tierProps">
+                <row v-for="(item, index) in item.rows"
+                :key="item.id"
+                :row="item"
+                :rowName="(tierProps.tierName + '-r' + index)"
+                :sceneNumber="tierProps.sceneNumber"
+                :mainActiveIndex="activeIndex">
+                  <template slot="panel" scope="rowProps">
+                    <panel v-for="(item, index) in item.panels"
+                    :key="item.id"
+                    :panel="item"
+                    :type="item.type"
+                    :panelName="(rowProps.rowName + '-p' + index)"
+                    :panelArray="panelArray"
+                    :sceneNumber="rowProps.sceneNumber"
+                    ref="panel">
+                    </panel>
+                  </template>
+                </row>
+              </template>
             </tier>
           </template>
         </template>
@@ -53,6 +72,11 @@ import InteractiveSlider from './InteractiveSlider';
 
 import Tier from './Tier';
 
+import Row from './Row';
+
+import Panel from './Panel';
+
+
 import addZero from './mixins';
 
 import iterate from './mixins';
@@ -61,7 +85,7 @@ export default {
   mixins: [addZero, iterate],
   name: 'main-slider',
   props: [],
-  components: { Tier, Interaction, InteractiveSlider },
+  components: { Tier, Row, Panel, Interaction, InteractiveSlider },
   data() {
     return {
       story: data.story,
@@ -229,8 +253,10 @@ export default {
 
   },
   mounted() {
-    this.setActiveIndex();
     const self = this;
+
+    this.setActiveIndex();
+    MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
 
 
     // returns an OBJECT with all interactive tier indexes as numeric keys
@@ -279,15 +305,16 @@ export default {
   // 'swiper active index:', this.mainSwiper.activeIndex);
   //  });
 
-// EXPERIMENT: SET activeIndex THROUGH setTranslate
+// SET ACTIVEINDEX THROUGH TRANSITIONSTART
    self.mainSwiper.on('transitionStart', () => {
      if (self.mainSwiper.activeIndex !== self.activeIndex) {
        self.setActiveIndex();
        MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
      }
    });
-// TIMING FUNCTIONS AND TOUCH EVENTS TO SET aI AND PROPERLY CHECK IF aI HAS changed
-   let theInterval;
+// OLD: TIMING FUNCTIONS AND TOUCH EVENTS TO SET ACTIVEINDEX
+// AND PROPERLY CHECK IF ACTIVEINDEX HAS changed
+//   let theInterval;
 
 //    function clearRepeatedCheck() {
 //      clearInterval(theInterval);
