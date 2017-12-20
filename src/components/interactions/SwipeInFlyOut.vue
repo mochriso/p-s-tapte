@@ -1,5 +1,5 @@
 <template lang="html">
-    <div>
+    <div :style="translateStyle">
       <slot>
       </slot>
     </div>
