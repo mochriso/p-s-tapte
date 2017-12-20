@@ -4,7 +4,8 @@
     :tierName="tierName"
     :tierIndex="tierIndex"
     :sceneNumber="sceneNumber"
-    :stepIndex="stepIndex">
+    :stepIndex="stepIndex"
+    :slideIndex="slideIndex">
     </slot>
     <slot name="interactive">
     </slot>
@@ -26,7 +27,7 @@ import addZero from './mixins';
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'sceneNumber', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
+  props: ['isMainActiveSlide', 'type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'sceneNumber', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
   data() {
     return {
       slideIndex: '',

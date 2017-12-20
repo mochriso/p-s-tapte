@@ -25,7 +25,7 @@ export default {
                       { type: 'static', position: 'left top' },
                     ] },
                     { panels: [
-                      { type: 'static', position: 'left top' }, { name: 't02-p03', type: 'static', position: 'right top', grow: 1, shrink: 1 },
+                      { type: 'static', position: 'left top' }, { type: 'static', position: 'right top', grow: 1, shrink: 1 },
                     ] },
                     { panels: [
                       { type: 'static', position: 'center top' },
@@ -38,7 +38,7 @@ export default {
                         { type: 'static', position: 'left top' },
                       ] },
                       { panels: [
-                        { type: 'static', position: 'left top' }, { name: 't03-p03', type: 'static', position: 'center top' },
+                        { type: 'static', position: 'left top' }, { type: 'static', position: 'center top' },
                       ] },
                       { panels: [
                         { type: 'static', position: 'center top' },
@@ -56,7 +56,7 @@ export default {
                       { type: 'static', position: 'center top' },
                     ] },
                     { panels: [
-                      { type: 'static', position: 'right top' }, { name: 't04-p03', type: 'static', position: 'left top' },
+                      { type: 'static', position: 'right top' }, { type: 'static', position: 'left top' },
                     ] },
                     { panels: [
                       { type: 'static', position: 'center bottom' },
@@ -70,10 +70,10 @@ export default {
                       { type: 'static', position: 'right top' },
                     ] },
                     { panels: [
-                      { type: 'static', position: 'right top' }, { name: 't05-p03', type: 'static', position: 'center top', grow: 0.6 }, { name: 't05-p04', type: 'static', position: 'center top' },
+                      { type: 'static', position: 'right top' }, { type: 'static', position: 'center top', grow: 0.6 }, { type: 'static', position: 'center top' },
                     ] },
                     { panels: [
-                      { type: 'static', position: 'left bottom' }, { name: 't05-p06', type: 'static', position: 'center bottom', grow: 2 },
+                      { type: 'static', position: 'left bottom' }, { type: 'static', position: 'center bottom', grow: 2 },
                     ] },
                     ],
                   },
@@ -93,7 +93,7 @@ export default {
                 { type: 'static',
                   rows: [
                     { panels: [
-                      { type: 'static', position: 'right top', grow: 1.35 }, { name: 't07-p02', type: 'static', position: 'center top' },
+                      { type: 'static', position: 'right top', grow: 1.35 }, { type: 'static', position: 'center top' },
                     ] },
                     { panels: [
                       { type: 'static', position: 'left top' },
@@ -132,7 +132,7 @@ export default {
                           position: 'center bottom',
                           willSwap: false,
                           swapped: false,
-                          interactionContext: false,
+
                         },
                       ] },
                       { panels: [
@@ -140,7 +140,6 @@ export default {
                           position: 'center bottom',
                           willSwap: false,
                           swapped: false,
-                          interactionContext: false,
                         },
                       ] },
                     ],
@@ -163,7 +162,6 @@ export default {
                         position: 'center bottom',
                         willSwap: false,
                         swapped: true,
-                        interactionContext: true,
                       },
                     ] },
                     { panels: [
@@ -179,7 +177,6 @@ export default {
                         position: 'center bottom',
                         willSwap: false,
                         swapped: false,
-                        interactionContext: false,
                       },
                     ] },
                   ],
@@ -202,7 +199,6 @@ export default {
                       position: 'center bottom',
                       willSwap: false,
                       swapped: true,
-                      interactionContext: false,
                     },
                   ] },
                   { panels: [
@@ -210,7 +206,7 @@ export default {
                       position: 'center bottom',
                       willSwap: false,
                       swapped: true,
-                      interactionContext: true,
+
                     },
                   ] },
                   { panels: [
@@ -223,25 +219,13 @@ export default {
                   ] },
                 ],
               },
-              { interaction:
-                    { gesture: 'swipe',
-                      mapping: 'viewport',
-                      animation: {
-                        animEvent: 'swipeInFlyOut',
-                        axis: 'X',
-                        direction: 'opposite',
-                      },
-                      interactionItem: {
-                        animAsset: 't04-int_el0.png',
-                      },
-                    },
-                rows: [
+              { rows: [
                 { panels: [
                   { type: 'static',
                     position: 'center bottom',
                     willSwap: false,
                     swapped: true,
-                    interactionContext: false,
+
                   },
                 ] },
                 { panels: [
@@ -249,7 +233,7 @@ export default {
                     position: 'center bottom',
                     willSwap: false,
                     swapped: true,
-                    interactionContext: false,
+
                   },
                 ] },
                 { panels: [
@@ -257,7 +241,7 @@ export default {
                     position: 'center bottom',
                     willSwap: false,
                     swapped: true,
-                    interactionContext: true,
+
                   },
                 ] },
               ],
@@ -300,7 +284,6 @@ export default {
                           position: '-73%, -72%',
                           willSwap: false,
                           swapped: false,
-                          interactionContext: false,
                          },
                         ] },
                         { panels: [
@@ -335,7 +318,6 @@ export default {
                             position: '-73%, -72%',
                             willSwap: false,
                             swapped: false,
-                            interactionContext: false,
                           },
                       ] },
                         { panels: [
@@ -344,7 +326,6 @@ export default {
                             position: 'center top',
                             willSwap: false,
                             swapped: true,
-                            interactionContext: true,
                           },
                         ] },
                       ],
@@ -386,7 +367,7 @@ export default {
                       { type: 'static', position: 'center bottom' },
                     ] },
                     { panels: [
-                      { type: 'static', position: 'center top' }, { name: 't12-p03', type: 'static', position: 'left top', grow: 1.6 },
+                      { type: 'static', position: 'center top' }, { type: 'static', position: 'left top', grow: 1.6 },
                     ] },
                     { panels: [
                       { type: 'static', position: 'center top' },

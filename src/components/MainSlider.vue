@@ -34,10 +34,13 @@
                 :row="item"
                 :rowName="(tierProps.tierName + '-r' + index)"
                 :sceneNumber="tierProps.sceneNumber"
+                :slideIndex="tierProps.slideIndex"
                 :mainActiveIndex="activeIndex">
                   <template slot="panel" scope="rowProps">
                     <panel v-for="(item, index) in item.panels"
                     :key="item.id"
+                    :mainActiveIndex="activeIndex"
+                    :slideIndex="rowProps.slideIndex"
                     :panel="item"
                     :type="item.type"
                     :panelName="(rowProps.rowName + '-p' + index)"

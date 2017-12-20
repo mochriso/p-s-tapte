@@ -2,9 +2,6 @@
   <div class="panel"
   :class="[this.panelName, panel.type]"
   :style="styler('wrap')">
-    <template v-if="panel.interactionContext">
-
-    </template>
     <slot></slot>
     <template v-if="panel.swapped">
       <img
@@ -40,14 +37,14 @@ import { IntEventbus } from './inteventbus';
 export default {
   mixins: [panelArt, swappedPanelArt, addTwoZeroes],
   name: 'panel',
-  props: ['intActiveIndex', 'panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex', 'stepIndex'],
+  props: ['intActiveIndex', 'panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex', 'stepIndex', 'slideIndex'],
   data() {
     return {
       coordinates: {
-        panelHeight: '',
-        panelWidth: '',
-        panelPositionX: '',
-        panelPositionY: '',
+        objectHeight: '',
+        objectWidth: '',
+    //    objectPositionX: '',
+        objectPositionY: '',
       },
       styles: [
         {
@@ -68,6 +65,8 @@ export default {
   computed: {
 
   },
+  watch: {
+  },
   methods: {
     styler(part) {
       const returnArr = [];
@@ -79,33 +78,23 @@ export default {
      });
      return returnArr[0];
     },
-    // returns array with all tier objects
   },
   created() {
 
   },
   mounted() {
-    const panelPosition = this.$el.getBoundingClientRect();
+    const objectPosition = this.$el.getBoundingClientRect();
     const self = this;
-    IntEventbus.$on('the-active-step', (intActiveIndex) => {
+    this.$nextTick(() => {
       if (self.panel.interactionContext) {
-        self.coordinates.panelHeight = panelPosition.height;
-        self.coordinates.panelWidth = panelPosition.width;
-        self.coordinates.panelPositionX = panelPosition.left;
-        self.coordinates.panelPositionY = panelPosition.top;
-        if (this.stepIndex === this.intActiveIndex) {
-            console.log('hello?');
-            IntEventbus.$emit(('panel-coordinates'), this.coordinates, this.panelName);
-        }
+        self.coordinates.objectHeight = objectPosition.height;
+        self.coordinates.objectWidth = objectPosition.width;
+      //  self.coordinates.objectPositionX = objectPosition.left;
+        self.coordinates.objectPositionY = objectPosition.top;
+        IntEventbus.$emit(('panel-coordinates'), self.coordinates, self.stepIndex, self.slideIndex, self.panelName);
+        console.log('sending coordinates', self.slideIndex);
       }
-  });
-
-
-    // function sendCoordinates() {
-    //   if (this.panel.interactionContext) {
-    //
-    //   }
-    // }
+    });
   },
 };
 </script>

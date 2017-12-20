@@ -1,5 +1,5 @@
 <template lang="html">
-    <div :style="styles">
+    <div>
       <slot>
       </slot>
     </div>
@@ -23,7 +23,7 @@
 export default {
   mixins: [],
   name: 'swipe-in-fly-out',
-  props: ['animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
+  props: ['intControllerTranslate', 'animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
   components: { },
   data() {
     return {
@@ -38,68 +38,71 @@ export default {
     };
   },
   computed: {
+    translateStyle() {
+      const ob = {};
+      ob.transform = ('translateX' + '(' + this.intControllerTranslate + 'px)');
+      return ob;
+    },
     SpeedUpTranslate() {
       return (this.translateVal * 2);
     },
     styles() {
-    const obj = {};
-    //   //    console.log('idle');
-    const startPosVal = ((this.interactionIndex + 1) * 100) + '%';
-    obj.left = startPosVal;
-    const start = () => {
+      const obj = {};
+      const startPosVal = ((this.interactionIndex + 1) * 100) + '%';
+      obj.left = startPosVal;
+      const start = () => {
+      };
+      const end = () => {
+        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
+      };
+      const movingFwd = () => {
+        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
+      };
+      const movingBwd = () => {
+        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
+      };
+      const animatingFwd = () => {
+        obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
+        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
+      };
+      const animatingBwd = () => {
+        obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
+        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
+      };
+      const cycleArr = [start, movingFwd, animatingFwd, animatingBwd, end, movingBwd];
 
-    };
-    const end = () => {
-      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-    };
-    const movingFwd = () => {
-      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-    };
-    const movingBwd = () => {
-      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-    };
-    const animatingFwd = () => {
-      obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
-      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-    };
-    const animatingBwd = () => {
-      obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
-      obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-    };
-    const cycleArr = [start, movingFwd, animatingFwd, animatingBwd, end, movingBwd];
-
-    for (let i = 0; i < cycleArr.length; i += 1) {
-      if (cycleArr[i].name === this.cycle) {
-         cycleArr[i]();
-         // console.log(statesArr[i].name, this.state);
-        //   console.log(obj);
+      for (let i = 0; i < cycleArr.length; i += 1) {
+        if (cycleArr[i].name === this.cycle) {
+           cycleArr[i]();
+           // console.log(statesArr[i].name, this.state);
+          //   console.log(obj);
+        }
       }
-    }
-      // if (this.direction === 'opposite') {
-      //   val = 'translateX' + '(' + Math.abs(this.translateVal) + 'px)';
-      // }
+        // if (this.direction === 'opposite') {
+        //   val = 'translateX' + '(' + Math.abs(this.translateVal) + 'px)';
+        // }
 
-      // if (this.state === 'ended') {
-      //   obj.left = '-80vw';
-      //   // obj.transition = '';
-      //   // val = '';
-      // }
-      // else if (this.state === 'leaving') {
-      //   console.log(val);
-      // }
-      // else if (this.state === 'operating') {
-      //   val = 'translateX' + '(' + this.translateVal + 'px)';
-      // }
-      // else if (this.state === 'entering') {
-      //   val = 'translateX' + '(' + this.translateVal + 'px)';
-      // }
-      // else if (this.state === 'idle') {
-      //   obj.left = '80vw';
-      //   val = 'translateX' + '(' + this.translateVal + 'px)';
-      // }
-      // obj.transform = val;
-     return (obj);
-    },
+        // if (this.state === 'ended') {
+        //   obj.left = '-80vw';
+        //   // obj.transition = '';
+        //   // val = '';
+        // }
+        // else if (this.state === 'leaving') {
+        //   console.log(val);
+        // }
+        // else if (this.state === 'operating') {
+        //   val = 'translateX' + '(' + this.translateVal + 'px)';
+        // }
+        // else if (this.state === 'entering') {
+        //   val = 'translateX' + '(' + this.translateVal + 'px)';
+        // }
+        // else if (this.state === 'idle') {
+        //   obj.left = '80vw';
+        //   val = 'translateX' + '(' + this.translateVal + 'px)';
+        // }
+        // obj.transform = val;
+       return (obj);
+      },
     // transition() {
     //   const val = this.transitionVal + 'ms';
     //   const obj = {};

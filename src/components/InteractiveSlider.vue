@@ -3,23 +3,24 @@
     <swiper :options="intControllerSliderOption" ref="intControllerSlider" class="int-controller-slider">
         <swiper-slide class="slide-int-controller" v-for="(item, index) in sequentialSteps" :key="item.id">
           <template v-if="item.interaction">
-            <div>
               <interaction
+              :interactionIndex="index"
+              :isMainActiveSlide="isMainActiveSlide"
               :key="item.id"
-              :tierIndex="tierIndex"
               :mainActiveIndex="mainActiveIndex"
               :sceneNumber="sceneNumber"
               :animAsset="item.interaction.interactionItem.animAsset"
               :animation="item.interaction.animation"
+              :interactionSpace="interactionSpaces[index]"
               ref="interaction">
               </interaction>
-            </div>
           </template>
         </swiper-slide>
     </swiper>
     <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
         <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
           <tier
+          :isMainActiveSlide="isMainActiveSlide"
           :sceneNumber="sceneNumber"
           :step="item"
           :stepIndex="index"
@@ -32,18 +33,20 @@
           ref="tier">
             <template slot="row" scope="tierProps">
               <row v-for="(item, index) in item.rows"
+              :isMainActiveSlide="isMainActiveSlide"
               :key="item.id"
               :row="item"
               :rowName="(tierProps.tierName + '-r' + index)"
+              :slideIndex="slideIndex"
               :sceneNumber="tierProps.sceneNumber"
               :stepIndex="tierProps.stepIndex">
                 <template slot="panel" scope="rowProps">
                   <panel v-for="(item, index) in item.panels"
-                  :intActiveIndex="intActiveIndex"
                   :key="item.id"
                   :panel="item"
                   :type="item.type"
                   :panelName="(rowProps.rowName + '-p' + index)"
+                  :slideIndex="slideIndex"
                   :sceneNumber="rowProps.sceneNumber"
                   :stepIndex="rowProps.stepIndex"
                   ref="panel">
@@ -88,7 +91,8 @@ export default {
   data() {
     return {
     //  areInteractionsDone: false,
-      InteractionCoordinates: [],
+      intControllerTranslate: '',
+      interactionSpaces: [],
       slideIndex: '',
       progressVal: '',
       intActiveIndex: 0,
@@ -105,7 +109,7 @@ export default {
       },
       interactiveSliderOption: {
         notNextTick: true,
-        nested: true,
+    //    nested: true,
         virtualTranslate: false,
         effect: 'fade',
         speed: 0,
@@ -120,12 +124,14 @@ export default {
   },
   watch: {
     isMainActiveSlide() {
-      if (this.isMainActiveSlide) {
-        this.$emit('is-main-active-slide', this.slideIndex);
-      }
+      this.intControllerSwiper.on('setTranslate', (swiper, translate) => {
+          IntEventbus.$emit('controller-translate', (translate));
+      });
+      //  this.$emit('is-main-active-slide', this.slideIndex);
     },
   },
   computed: {
+
     isMainActiveSlide() {
       if (this.mainActiveIndex === this.slideIndex) {
         return true;
@@ -141,6 +147,20 @@ export default {
     },
   },
   methods: {
+    intSpaceStyler(tierIndex, objectCoordinates, panelName) {
+      this.interactionSpaces.push(
+        {
+          name: panelName,
+          tier: tierIndex,
+          style: {
+            width: (objectCoordinates.objectWidth + 'px'),
+            height: (objectCoordinates.objectHeight + 'px'),
+            left: 100,
+            top: (objectCoordinates.objectPositionY + 'px'),
+          },
+        },
+      );
+    },
     setIntActiveIndex() {
       this.intActiveIndex = this.intSwiper.activeIndex;
     },
@@ -149,6 +169,10 @@ export default {
     },
   },
   created() {
+    IntEventbus.$on('panel-coordinates', (panelCoordinates, stepIndex, tierIndex, panelName) => {
+      console.log('recieved coordinates', panelCoordinates, stepIndex, tierIndex, panelName);
+       this.intSpaceStyler(tierIndex, panelCoordinates, panelName);
+    });
   },
   mounted() {
     const intControllerSwiper = this.intControllerSwiper;
@@ -156,7 +180,6 @@ export default {
     const self = this;
     this.setIntActiveIndex();
     this.setIntControllerActiveIndex();
-    IntEventbus.$emit('the-active-step', self.intActiveIndex);
 
     interactiveSwiper.lockSwipes();
     intControllerSwiper.on('transitionStart', () => {
@@ -198,61 +221,53 @@ export default {
     //         setTimeout(resetSwiper, 10);
     //     });
 
-    IntEventbus.$on('panel-coordinates', (panelCoordinates, panelName) => {
-      console.log(panelCoordinates, panelName);
-      // todo: create object inside InteractionCoordinates array
-    });
+    // interactiveSwiper.on('transitionEnd', (swiper, sliderMove) => {
+    // //  console.log('slide');
+    // });
 
-    interactiveSwiper.on('transitionEnd', (swiper, sliderMove) => {
-    //  console.log('slide');
-    });
-
-    this.$on('is-main-active-slide', (tierIndex) => {
-      console.log('interactiveSlide component: is main active slide', tierIndex);
-      // EMIT TOUCH EVENTS
-      interactiveSwiper.on('transitionEnd', (swiper) => {
-          MainEventbus.$emit('int-transitionEnd', swiper);
-        //  console.log('int-transitionEnd', swiper);
-      });
-
-      interactiveSwiper.on('reachEnd', (swiper) => {
-        IntEventbus.$emit('int-reachEnd');
-         // swiper.slideTo(0, 0, false);
-        //  swiper.update(true);
-        //  swiper.updateProgress();
-      });
-      interactiveSwiper.on('sliderMove', (swiper, sliderMove) => {
-        IntEventbus.$emit('int-sliderMove', sliderMove);
-      });
-      interactiveSwiper.on('reachBeginning', (swiper) => {
-        IntEventbus.$emit('int-reachBeginning', swiper);
-      });
-      interactiveSwiper.on('setTranslate', (swiper, translate) => {
-          IntEventbus.$emit('int-setTranslate', translate);
-        //  console.log('int-translate', swiper, translate);
-      });
-      interactiveSwiper.on('transitionStart', (swiper) => {
-          IntEventbus.$emit('int-transitionStart');
-      });
-      interactiveSwiper.on('setTransition', (swiper, transition) => {
-          IntEventbus.$emit('int-setTransition', transition);
-      });
-
-      interactiveSwiper.on('progress', (swiper, progress) => {
-          this.progressVal = progress;
-          IntEventbus.$emit('int-progress', progress);
-      });
-      // interactiveSwiper.on('touchStart', (swiper, touchstart) => {
-      //     IntEventbus.$emit('int-touchStart', touchstart);
-      // });
-      // interactiveSwiper.on('transitionEnd', (swiper) => {
-      //     IntEventbus.$emit('int-transitionEnd', swiper);
-      // });
-
-      interactiveSwiper.on('touchEnd', (swiper, touchend) => {
-          IntEventbus.$emit('int-touchEnd', touchend);
-      });
-    });
+    // this.$on('is-main-active-slide', (tierIndex) => {
+    //   console.log('interactiveSlide component: is main active slide', tierIndex);
+    //   // EMIT TOUCH EVENTS
+    //   interactiveSwiper.on('transitionEnd', (swiper) => {
+    //       MainEventbus.$emit('int-transitionEnd', swiper);
+    //     //  console.log('int-transitionEnd', swiper);
+    //   });
+    //
+    //   interactiveSwiper.on('reachEnd', (swiper) => {
+    //     IntEventbus.$emit('int-reachEnd');
+    //      // swiper.slideTo(0, 0, false);
+    //     //  swiper.update(true);
+    //     //  swiper.updateProgress();
+    //   });
+    //   interactiveSwiper.on('sliderMove', (swiper, sliderMove) => {
+    //     IntEventbus.$emit('int-sliderMove', sliderMove);
+    //   });
+    //   interactiveSwiper.on('reachBeginning', (swiper) => {
+    //     IntEventbus.$emit('int-reachBeginning', swiper);
+    //   });
+    //
+    //   interactiveSwiper.on('transitionStart', (swiper) => {
+    //       IntEventbus.$emit('int-transitionStart');
+    //   });
+    //   interactiveSwiper.on('setTransition', (swiper, transition) => {
+    //       IntEventbus.$emit('int-setTransition', transition);
+    //   });
+    //
+    //   interactiveSwiper.on('progress', (swiper, progress) => {
+    //       this.progressVal = progress;
+    //       IntEventbus.$emit('int-progress', progress);
+    //   });
+    //   // interactiveSwiper.on('touchStart', (swiper, touchstart) => {
+    //   //     IntEventbus.$emit('int-touchStart', touchstart);
+    //   // });
+    //   // interactiveSwiper.on('transitionEnd', (swiper) => {
+    //   //     IntEventbus.$emit('int-transitionEnd', swiper);
+    //   // });
+    //
+    //   interactiveSwiper.on('touchEnd', (swiper, touchend) => {
+    //       IntEventbus.$emit('int-touchEnd', touchend);
+    //   });
+    // });
 
 
 //    interactiveSwiper.on('touchMove', (swiper, touchMove) => {
@@ -286,6 +301,8 @@ export default {
         // });
   },
   beforeDestroy() {
+    this.$off();
+//    intControllerSwiper.off(setTranslate);
     IntEventbus.$off();
     MainEventbus.$off();
   },

@@ -2,6 +2,7 @@
   <component
   :is="activeComponent"
   v-show="showInt"
+  :intControllerTranslate="intControllerTranslate"
   :translateVal="translateVal"
   :movingFwdVal="movingFwdVal"
   :movingBwdVal="movingBwdVal"
@@ -12,7 +13,8 @@
   :cycle="cycle"
   :animation="this.animation"
   class="touch-behaviour"
-  :class="this.animation.animEvent">
+  :class="this.animation.animEvent"
+  :style="intSpaceStyle">
     <interaction-item :sceneNumber="this.sceneNumber" :animAsset="animAsset">
     </interaction-item>
   </component>
@@ -38,6 +40,14 @@ export default {
     FadeToBlack,
   },
   props: {
+    interactionSpace: {
+      type: Object,
+      required: false,
+    },
+    isMainActiveSlide: {
+      type: Boolean,
+      required: true,
+    },
     animation: {
       type: Object,
       required: true,
@@ -50,9 +60,8 @@ export default {
       type: Number,
       required: false,
     },
-    tierIndex: {
-      type: Number,
-      required: true,
+    slideIndex: {
+      required: false,
     },
     mainActiveIndex: {
       type: Number,
@@ -70,10 +79,14 @@ export default {
   },
   data() {
     return {
+      idleStyle: {
+        display: 'none',
+      },
+      intControllerTranslate: '',
       intActiveIndex: 0,
   //    isResponding: false,
   //    sumPlayedInteractions: 0,
-      showInt: false,
+      showInt: true,
       activeComponent: this.animation.animEvent,
       beginningReached: true,
       endReached: false,
@@ -94,110 +107,121 @@ export default {
     };
   },
   computed: {
-    interactionCount() {
-    //  return this.interactionContext.length;
-    },
-    isMainActiveSlide() {
-      if (this.mainActiveIndex === this.tierIndex) {
-        return true;
+    intSpaceStyle() {
+      let obj = {};
+      const self = this;
+     if (this.isMainActiveSlide) {
+        obj = self.interactionSpace.style;
+        obj.left = (obj.left * (self.interactionIndex + 1)) + 'vw';
       }
-      return false;
-    },
-    hasNextInteractionIndex() {
-      if (this.interactionIndex === this.intActiveIndex) {
-        return true;
+      else {
+        obj = {};
       }
-      return false;
+        // obj.display = 'none';
+      return obj;
     },
-    hasPreviousInteractionIndex() {
-      if ((this.interactionIndex + 1) === this.intActiveIndex) {
-        return true;
-      }
-      return false;
-    },
-    isNextInteraction() {
-      if (this.isMainActiveSlide) {
-        if (this.hasNextInteractionIndex) {
-          return true;
-        }
-        return false;
-      }
-      return false;
-    },
-    isPreviousInteraction() {
-      if (this.isMainActiveSlide) {
-        if (this.hasPreviousInteractionIndex) {
-          return true;
-        }
-        return false;
-      }
-      return false;
+    // hasNextInteractionIndex() {
+    //   if (this.interactionIndex === this.intActiveIndex) {
+    //     return true;
+    //   }
+    //   return false;
+    // },
+    // hasPreviousInteractionIndex() {
+    //   if ((this.interactionIndex + 1) === this.intActiveIndex) {
+    //     return true;
+    //   }
+    //   return false;
+    // },
+    // isNextInteraction() {
+    //   if (this.isMainActiveSlide) {
+    //     if (this.hasNextInteractionIndex) {
+    //       return true;
+    //     }
+    //     return false;
+    //   }
+    //   return false;
+    // },
+    // isPreviousInteraction() {
+    //   if (this.isMainActiveSlide) {
+    //     if (this.hasPreviousInteractionIndex) {
+    //       return true;
+    //     }
+    //     return false;
+    //   }
+    //   return false;
+    // },
+  },
+  methods: {
+    intSpaceStyler(val) {
     },
   },
   watch: {
-    isNextInteraction() {
-      if (this.isNextInteraction) {
-        this.showInt = true;
-//        this.isResponding = true;
-      //  this.$emit('is-active-interaction');
+    interactionSpace(newVal, oldVal) {
+      if (newVal !== 'undefined') {
+        this.intSpaceStyler(newVal);
       }
-      else {
-//        this.isResponding = false;
+      else if (oldVal !== 'undefined') {
+        this.intSpaceStyler(oldVal);
       }
     },
-    isMainActiveSlide() {
-      if (this.isMainActiveSlide) {
-        this.$emit('is-main-active-slide');
-      }
-    },
-    hasTranisitionEnded() {
-      if (this.hasTranisitionEnded) {
-        if (this.isNextInteraction) {
-          this.showInt = true;
-          this.cycle = 'start';
-        }
-        else if (this.isPreviousInteraction) {
-          this.showInt = true;
-          this.cycle = 'end';
-          console.log('cycle End?', this.cycle);
-        }
-        else if (this.interactionIndex > this.intActiveIndex) {
-          this.showInt = false;
-          this.cycle = 'start';
-          console.log('cycle start?', this.cycle);
-        }
-      }
-    },
-    translateVal(newVal, oldVal) {
-      if (this.sliderMove) {
-        if (newVal < oldVal) {
-          this.cycle = 'movingFwd';
-          this.movingBwdVal = '';
-          this.movingFwdVal = newVal;
-        }
-        else {
-          this.cycle = 'movingBwd';
-          this.movingFwdVal = '';
-          this.movingBwdVal = newVal;
-        }
-      }
-    },
-    cycle(newVal, oldVal) {
-    },
-    isTransitioning() {
-      if (this.isTransitioning) {
-       if (this.cycle === 'movingFwd') {
-         this.cycle = 'animatingFwd';
-         this.animatingBwdVal = '';
-         this.animatingFwdVal = this.translateVal;
-       }
-       else if (this.cycle === 'movingBwd') {
-         this.cycle = 'animatingBwd';
-         this.animatingfwdVal = '';
-         this.animatingBwdVal = this.translateVal;
-       }
-     }
-   },
+//     isNextInteraction() {
+//       if (this.isNextInteraction) {
+//         this.showInt = true;
+// //        this.isResponding = true;
+//       //  this.$emit('is-active-interaction');
+//       }
+//       else {
+// //        this.isResponding = false;
+//       }
+//     },
+   //  hasTranisitionEnded() {
+   //    if (this.hasTranisitionEnded) {
+   //      if (this.isNextInteraction) {
+   //        this.showInt = true;
+   //        this.cycle = 'start';
+   //      }
+   //      else if (this.isPreviousInteraction) {
+   //        this.showInt = true;
+   //        this.cycle = 'end';
+   //        console.log('cycle End?', this.cycle);
+   //      }
+   //      else if (this.interactionIndex > this.intActiveIndex) {
+   //        this.showInt = false;
+   //        this.cycle = 'start';
+   //        console.log('cycle start?', this.cycle);
+   //      }
+   //    }
+   //  },
+   //  translateVal(newVal, oldVal) {
+   //    if (this.sliderMove) {
+   //      if (newVal < oldVal) {
+   //        this.cycle = 'movingFwd';
+   //        this.movingBwdVal = '';
+   //        this.movingFwdVal = newVal;
+   //      }
+   //      else {
+   //        this.cycle = 'movingBwd';
+   //        this.movingFwdVal = '';
+   //        this.movingBwdVal = newVal;
+   //      }
+   //    }
+   //  },
+   //  cycle(newVal, oldVal) {
+   //  },
+   //  isTransitioning() {
+   //    if (this.isTransitioning) {
+   //     if (this.cycle === 'movingFwd') {
+   //       this.cycle = 'animatingFwd';
+   //       this.animatingBwdVal = '';
+   //       this.animatingFwdVal = this.translateVal;
+   //     }
+   //     else if (this.cycle === 'movingBwd') {
+   //       this.cycle = 'animatingBwd';
+   //       this.animatingfwdVal = '';
+   //       this.animatingBwdVal = this.translateVal;
+   //     }
+   //   }
+   // },
 //    isResponding(val) {
 //        this.$emit('is-it-responding', val);
 //    },
@@ -299,35 +323,35 @@ export default {
 
 //    this.$on('is-it-responding', (isResponding) => {
   //    if (isResponding) {
-        IntEventbus.$on('int-reachBeginning', () => {
-          this.beginningReached = true;
-          this.endReached = false;
-        });
-        IntEventbus.$on('int-reachEnd', () => {
-          this.endReached = true;
-          this.beginningReached = false;
-        });
-        IntEventbus.$on('int-sliderMove', (sliderMove) => {
-          this.hasTranisitionEnded = false;
-          this.sliderMove = true;
-        });
-        IntEventbus.$on('int-setTranslate', (translate) => {
-            this.translateVal = translate;
-            this.isTranslating = true;
-        });
-        IntEventbus.$on('int-setTransition', (transition) => {
-            this.transitionVal = transition;
-        });
-        IntEventbus.$on('int-transitionStart', () => {
-          this.isTransitioning = true;
-        });
-        IntEventbus.$on('int-progress', (progress) => {
-            this.progressVal = progress;
-        });
-        IntEventbus.$on('int-touchEnd', (touchend) => {
-          this.hasTranisitionEnded = false;
-          this.sliderMove = false;
-        });
+        // IntEventbus.$on('int-reachBeginning', () => {
+        //   this.beginningReached = true;
+        //   this.endReached = false;
+        // });
+        // IntEventbus.$on('int-reachEnd', () => {
+        //   this.endReached = true;
+        //   this.beginningReached = false;
+        // });
+        // IntEventbus.$on('int-sliderMove', (sliderMove) => {
+        //   this.hasTranisitionEnded = false;
+        //   this.sliderMove = true;
+        // });
+        // IntEventbus.$on('int-setTranslate', (translate) => {
+        //     this.translateVal = translate;
+        //     this.isTranslating = true;
+        // });
+        // IntEventbus.$on('int-setTransition', (transition) => {
+        //     this.transitionVal = transition;
+        // });
+        // IntEventbus.$on('int-transitionStart', () => {
+        //   this.isTransitioning = true;
+        // });
+        // IntEventbus.$on('int-progress', (progress) => {
+        //     this.progressVal = progress;
+        // });
+        // IntEventbus.$on('int-touchEnd', (touchend) => {
+        //   this.hasTranisitionEnded = false;
+        //   this.sliderMove = false;
+        // });
 //      }
 //      else {
 //        IntEventbus.$off();
@@ -351,6 +375,12 @@ export default {
         //   }
         // });
   },
+  mounted() {
+    IntEventbus.$on('controller-translate', (translate) => {
+     this.intControllerTranslate = translate;
+     console.log('int-translate', translate, this.intControllerTranslate);
+    });
+  },
   beforeDestroy() {
     IntEventbus.$off();
     MainEventbus.$off();
@@ -361,7 +391,5 @@ export default {
 <style lang="css">
   .touch-behaviour {
     position: absolute;
-    width: 100%;
-    height: 100%;
   }
 </style>
