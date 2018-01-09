@@ -1,9 +1,10 @@
 <template lang="html">
   <div>
-    <swiper :options="intControllerSliderOption" ref="intControllerSlider" class="int-controller-slider">
-        <swiper-slide class="slide-int-controller" v-for="(item, index) in sequentialSteps" :key="item.id">
+    <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
+        <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
           <template v-if="item.interaction">
               <interaction
+              :intSwiperTranslate="intSwiperTranslate"
               :interactionIndex="index"
               :isMainActiveSlide="isMainActiveSlide"
               :key="item.id"
@@ -15,46 +16,6 @@
               ref="interaction">
               </interaction>
           </template>
-        </swiper-slide>
-    </swiper>
-    <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
-        <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
-          <tier
-          :isMainActiveSlide="isMainActiveSlide"
-          :sceneNumber="sceneNumber"
-          :step="item"
-          :stepIndex="index"
-          :tierIndex="tierIndex"
-          :mainActiveIndex="mainActiveIndex"
-          :type="type"
-          :rows="item.rows"
-          :stepName="('st' + index)"
-          :tierName="('t' + addZero(tierIndex))"
-          ref="tier">
-            <template slot="row" scope="tierProps">
-              <row v-for="(item, index) in item.rows"
-              :isMainActiveSlide="isMainActiveSlide"
-              :key="item.id"
-              :row="item"
-              :rowName="(tierProps.tierName + '-r' + index)"
-              :slideIndex="slideIndex"
-              :sceneNumber="tierProps.sceneNumber"
-              :stepIndex="tierProps.stepIndex">
-                <template slot="panel" scope="rowProps">
-                  <panel v-for="(item, index) in item.panels"
-                  :key="item.id"
-                  :panel="item"
-                  :type="item.type"
-                  :panelName="(rowProps.rowName + '-p' + index)"
-                  :slideIndex="slideIndex"
-                  :sceneNumber="rowProps.sceneNumber"
-                  :stepIndex="rowProps.stepIndex"
-                  ref="panel">
-                  </panel>
-                </template>
-              </row>
-            </template>
-          </tier>
         </swiper-slide>
     </swiper>
   </div>
@@ -91,31 +52,17 @@ export default {
   data() {
     return {
     //  areInteractionsDone: false,
-      intControllerTranslate: '',
+      intSwiperTranslate: '',
       interactionSpaces: [],
       slideIndex: '',
       progressVal: '',
       intActiveIndex: 0,
-      intControllerActiveIndex: 0,
-      intControllerSliderOption: {
+      interactiveSliderOption: {
         notNextTick: true,
         nested: true,
         spaceBetween: 0,
         slidesPerView: 'auto',
-        centeredSlides: false,
-        watchSlidesProgress: true,
-        watchSlidesVisibility: true,
-        autoplay: false,
-      },
-      interactiveSliderOption: {
-        notNextTick: true,
-    //    nested: true,
-        virtualTranslate: false,
-        effect: 'fade',
-        speed: 0,
-        spaceBetween: 0,
-        slidesPerView: 'auto',
-        centeredSlides: false,
+        centeredSlides: true,
         watchSlidesProgress: true,
         watchSlidesVisibility: true,
         autoplay: false,
@@ -123,15 +70,13 @@ export default {
     };
   },
   watch: {
-    isMainActiveSlide() {
-      this.intControllerSwiper.on('setTranslate', (swiper, translate) => {
-          IntEventbus.$emit('controller-translate', (translate));
-      });
-      //  this.$emit('is-main-active-slide', this.slideIndex);
+    isMainActiveSlide(newVal, oldVal) {
+    },
+    intActiveIndex() {
+      this.emitIntActiveIndex();
     },
   },
   computed: {
-
     isMainActiveSlide() {
       if (this.mainActiveIndex === this.slideIndex) {
         return true;
@@ -142,12 +87,17 @@ export default {
     intSwiper() {
       return this.$refs.interactiveSlider.swiper;
     },
-    intControllerSwiper() {
-      return this.$refs.intControllerSlider.swiper;
-    },
   },
   methods: {
-    intSpaceStyler(tierIndex, objectCoordinates, panelName) {
+    setIntSwiperTranslate(translate) {
+      this.intSwiperTranslate = translate;
+      console.log(this.intSwiperTranslate);
+    },
+    emitIntActiveIndex() {
+      IntEventbus.$emit('int-active-index', this.intActiveIndex, this.slideIndex);
+    //  console.log('sending out int-active-index', this.intActiveIndex, this.slideIndex);
+    },
+    setIntSpaceStyle(tierIndex, objectCoordinates, panelName) {
       this.interactionSpaces.push(
         {
           name: panelName,
@@ -155,49 +105,42 @@ export default {
           style: {
             width: (objectCoordinates.objectWidth + 'px'),
             height: (objectCoordinates.objectHeight + 'px'),
-            left: 100,
+          //  left: 100,
             top: (objectCoordinates.objectPositionY + 'px'),
           },
         },
       );
+    //  console.log('this.interactionSpaces:' + this.interactionSpaces);
     },
     setIntActiveIndex() {
       this.intActiveIndex = this.intSwiper.activeIndex;
     },
-    setIntControllerActiveIndex() {
-      this.intControllerActiveIndex = this.intControllerSwiper.activeIndex;
-    },
+
   },
   created() {
-    IntEventbus.$on('panel-coordinates', (panelCoordinates, stepIndex, tierIndex, panelName) => {
-      console.log('recieved coordinates', panelCoordinates, stepIndex, tierIndex, panelName);
-       this.intSpaceStyler(tierIndex, panelCoordinates, panelName);
+    IntEventbus.$on('panel-coordinates', (panelCoordinates, interactionStep, slideIndex, panelName) => {
+//  console.log('recieved coordinates', panelCoordinates, interactionStep, slideIndex, panelName);
+        if (this.slideIndex === slideIndex) {
+          this.setIntSpaceStyle(slideIndex, panelCoordinates, panelName);
+        }
     });
   },
   mounted() {
-    const intControllerSwiper = this.intControllerSwiper;
+//    this.$on('int-translate', (translate) => {
+//      this.setIntSwiperTranslate(translate);
+//    });
+    this.$nextTick(() => {
+        this.emitIntActiveIndex();
+    });
+
+
     const interactiveSwiper = this.intSwiper;
     const self = this;
     this.setIntActiveIndex();
-    this.setIntControllerActiveIndex();
 
-    interactiveSwiper.lockSwipes();
-    intControllerSwiper.on('transitionStart', () => {
-      if (intControllerSwiper.activeIndex > self.intControllerActiveIndex) {
-        interactiveSwiper.unlockSwipes();
-        interactiveSwiper.slideNext(false, 0);
-        self.setIntControllerActiveIndex();
-        this.setIntActiveIndex();
-        interactiveSwiper.lockSwipes();
-      }
-      else if (intControllerSwiper.activeIndex < self.intControllerActiveIndex) {
-        interactiveSwiper.unlockSwipes();
-        interactiveSwiper.slidePrev(false, 0);
-        self.setIntControllerActiveIndex();
-        this.setIntActiveIndex();
-        interactiveSwiper.lockSwipes();
-      }
-    });
+    interactiveSwiper.on('transitionStart', () => {
+        self.setIntActiveIndex();
+      });
 
     // SET ACTIVEINDEX THROUGH TRANSITIONSTART
        // interactiveSwiper.on('transitionStart', () => {
@@ -302,7 +245,6 @@ export default {
   },
   beforeDestroy() {
     this.$off();
-//    intControllerSwiper.off(setTranslate);
     IntEventbus.$off();
     MainEventbus.$off();
   },
@@ -310,7 +252,7 @@ export default {
 </script>
 
 <style lang="scss">
-.interactive-slider, .int-controller-slider {
+.interactive-slider {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -339,9 +281,5 @@ export default {
 }
 .interactive-slider {
     z-index: 50;
-}
-
-.int-controller-slider {
-    z-index: 100;
 }
 </style>

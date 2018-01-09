@@ -4,8 +4,8 @@
     :tierName="tierName"
     :tierIndex="tierIndex"
     :sceneNumber="sceneNumber"
-    :stepIndex="stepIndex"
-    :slideIndex="slideIndex">
+    :slideIndex="slideIndex"
+    :intActiveIndex="intActiveIndex">
     </slot>
     <slot name="interactive">
     </slot>
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { IntEventbus } from './inteventbus';
 
 import Row from './Row';
 
@@ -27,10 +28,11 @@ import addZero from './mixins';
 export default {
   mixins: [addZero],
   name: 'tier',
-  props: ['isMainActiveSlide', 'type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'sceneNumber', 'mainActiveIndex', 'stepName', 'step', 'stepIndex'],
+  props: ['slideIndex', 'isMainActiveSlide', 'type', 'rows', 'tierName', 'activeIndex', 'tier', 'tierIndex', 'sceneNumber', 'mainActiveIndex', 'stepName', 'step'],
+  components: { Panel, Row, Interaction },
   data() {
     return {
-      slideIndex: '',
+      intActiveIndex: '',
     };
   },
   computed: {
@@ -72,6 +74,14 @@ export default {
 
   },
   methods: {
+    listenForIntActiveIndex() {
+      IntEventbus.$on('int-active-index', (intActiveIndex, slideIndex) => {
+        if (slideIndex === this.slideIndex) {
+      //    console.log('recieved intActiveIndex, slideIndex', intActiveIndex, slideIndex);
+          this.intActiveIndex = intActiveIndex;
+        }
+      });
+    },
     // yourIndex(obj) {
     //   this.allInteractions.push(obj);
     //   return allInteractions.indexOf(obj);
@@ -95,17 +105,18 @@ export default {
     // },
   },
   created() {
-
+    this.listenForIntActiveIndex();
   },
   beforeMount() {
   },
   mounted() {
+
+
   //  this.emitEveryType();
   //  const ind = this.index;
   //  this.tierIndex(ind);
 // console.log(this.index);
   },
-  components: { Panel, Row, Interaction },
 };
 </script>
 

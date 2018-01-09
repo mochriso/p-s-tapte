@@ -37,7 +37,7 @@ import { IntEventbus } from './inteventbus';
 export default {
   mixins: [panelArt, swappedPanelArt, addTwoZeroes],
   name: 'panel',
-  props: ['intActiveIndex', 'panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex', 'stepIndex', 'slideIndex'],
+  props: ['intActiveIndex', 'panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex', 'slideIndex'],
   data() {
     return {
       coordinates: {
@@ -66,6 +66,13 @@ export default {
 
   },
   watch: {
+    mainActiveIndex(newVal) {
+      if (this.panel.interactionContext) {
+        if (this.slideIndex === newVal) {
+            this.setEmitCoordinates();
+        }
+      }
+    },
   },
   methods: {
     styler(part) {
@@ -78,21 +85,28 @@ export default {
      });
      return returnArr[0];
     },
+    setEmitCoordinates() {
+      const objectPosition = this.$el.getBoundingClientRect();
+      this.coordinates.objectHeight = objectPosition.height;
+      this.coordinates.objectWidth = objectPosition.width;
+    //  self.coordinates.objectPositionX = objectPosition.left;
+      this.coordinates.objectPositionY = objectPosition.top;
+      IntEventbus.$emit(('panel-coordinates'), this.coordinates, this.panel.interactionStep, this.slideIndex, this.panelName);
+// console.log('sending coordinates', 'this.coordinates:' + this.coordinates,
+// 'this.panel.interactionStep:' + this.panel.interactionStep,
+// 'this.slideIndex:' + this.slideIndex, 'this.panelName:' + this.panelName);
+    },
   },
   created() {
 
   },
   mounted() {
-    const objectPosition = this.$el.getBoundingClientRect();
-    const self = this;
     this.$nextTick(() => {
-      if (self.panel.interactionContext) {
-        self.coordinates.objectHeight = objectPosition.height;
-        self.coordinates.objectWidth = objectPosition.width;
-      //  self.coordinates.objectPositionX = objectPosition.left;
-        self.coordinates.objectPositionY = objectPosition.top;
-        IntEventbus.$emit(('panel-coordinates'), self.coordinates, self.stepIndex, self.slideIndex, self.panelName);
-        console.log('sending coordinates', self.slideIndex);
+      if (this.panel.interactionContext) {
+// console.log('this.panel.interactionContext', this.panel.interactionContext);
+// console.log('this.slideIndex === this.mainActiveIndex',
+// this.slideIndex === this.mainActiveIndex);
+        this.setEmitCoordinates();
       }
     });
   },

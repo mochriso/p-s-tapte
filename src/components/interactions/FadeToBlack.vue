@@ -23,7 +23,7 @@
 export default {
   mixins: [],
   name: 'fade-to-black',
-  props: ['animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
+  props: ['isMainActiveSlide', 'animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
   components: { },
   data() {
     return {

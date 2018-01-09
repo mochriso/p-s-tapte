@@ -23,10 +23,11 @@
 export default {
   mixins: [],
   name: 'swipe-in-fly-out',
-  props: ['intControllerTranslate', 'animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
+  props: ['isMainActiveSlide', 'animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
   components: { },
   data() {
     return {
+      intSwiperTranslate: 0,
       direction: this.animation.direction,
       state: 'idle',
       // styles: {
@@ -40,7 +41,7 @@ export default {
   computed: {
     translateStyle() {
       const ob = {};
-      ob.transform = ('translateX' + '(' + this.intControllerTranslate + 'px)');
+    //  ob.transform = ('translateX' + '(' + this.intSwiperTranslate + 'px)');
       return ob;
     },
     SpeedUpTranslate() {
@@ -182,7 +183,18 @@ export default {
   created() {
   },
   mounted() {
-
+    this.$nextTick(() => {
+      // console.log(this.$parent.$parent.$parent.$refs.interactiveSlider.swiper);
+      const parentIntSwiper = this.$parent.$parent.$parent.$parent.$refs.interactiveSlider.swiper;
+    //  console.log('width:' + parentIntSwiper.width, 'height:' + parentIntSwiper.height);
+      parentIntSwiper.on('setTranslate', (swiper, translate) => {
+        this.intSwiperTranslate = translate;
+        console.log(this.intSwiperTranslate, translate);
+      });
+    });
+  },
+  beforeDestroy() {
+    parentIntSwiper.off();
   },
 };
 </script>

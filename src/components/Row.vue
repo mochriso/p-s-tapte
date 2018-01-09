@@ -5,8 +5,8 @@
     <slot name ="panel"
     :rowName="rowName"
     :sceneNumber="sceneNumber"
-    :stepIndex="stepIndex"
-    :slideIndex="slideIndex">
+    :slideIndex="slideIndex"
+    :intActiveIndex="intActiveIndex">
     </slot>
   </div>
 </template>
@@ -15,7 +15,7 @@
 export default {
   mixins: [],
   name: 'row',
-  props: ['isMainActiveSlide', 'row', 'rowName', 'tierIndex', 'activeIndex', 'sceneNumber', 'mainActiveIndex', 'stepIndex', 'slideIndex'],
+  props: ['intActiveIndex', 'isMainActiveSlide', 'row', 'rowName', 'tierIndex', 'activeIndex', 'sceneNumber', 'mainActiveIndex', 'slideIndex'],
   data() {
     return {
 

@@ -2,7 +2,8 @@
   <component
   :is="activeComponent"
   v-show="showInt"
-  :intControllerTranslate="intControllerTranslate"
+  :isMainActiveSlide="isMainActiveSlide"
+  :intSwiperTranslate="intSwiperTranslate"
   :translateVal="translateVal"
   :movingFwdVal="movingFwdVal"
   :movingBwdVal="movingBwdVal"
@@ -40,6 +41,13 @@ export default {
     FadeToBlack,
   },
   props: {
+    intSwiper: {
+      required: false,
+    },
+    intSwiperTranslate: {
+    //  type: Number,
+      required: false,
+    },
     interactionSpace: {
       type: Object,
       required: false,
@@ -56,7 +64,7 @@ export default {
       type: Number,
       required: false,
     },
-    stepIndex: {
+    interactionStep: {
       type: Number,
       required: false,
     },
@@ -82,7 +90,6 @@ export default {
       idleStyle: {
         display: 'none',
       },
-      intControllerTranslate: '',
       intActiveIndex: 0,
   //    isResponding: false,
   //    sumPlayedInteractions: 0,
@@ -109,10 +116,9 @@ export default {
   computed: {
     intSpaceStyle() {
       let obj = {};
-      const self = this;
      if (this.isMainActiveSlide) {
-        obj = self.interactionSpace.style;
-        obj.left = (obj.left * (self.interactionIndex + 1)) + 'vw';
+        obj = this.interactionSpace.style;
+        obj.left = (obj.left * (this.interactionIndex + 1)) + 'vw';
       }
       else {
         obj = {};
@@ -376,12 +382,17 @@ export default {
         // });
   },
   mounted() {
-    IntEventbus.$on('controller-translate', (translate) => {
-     this.intControllerTranslate = translate;
-     console.log('int-translate', translate, this.intControllerTranslate);
+    this.$nextTick(() => {
+      // console.log(this.$parent.$parent.$parent.$refs.interactiveSlider.swiper);
+      const parentIntSwiper = this.$parent.$parent.$parent.$refs.interactiveSlider.swiper;
+      console.log('width:' + parentIntSwiper.width, 'height:' + parentIntSwiper.height);
+      parentIntSwiper.on('xx', (swiper, xx) => {
+        // skdfh
+       });
     });
   },
   beforeDestroy() {
+    parentIntSwiper.off();
     IntEventbus.$off();
     MainEventbus.$off();
   },

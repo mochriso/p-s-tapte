@@ -6,18 +6,19 @@
         <swiper-slide class="slide-main" :sceneIndex="scene.number" v-for="(item,index) in scene.tiers" key="item.id">
           <template scope="slideProps">
           <template v-if="item.type === 'interactive'">
-              <interactive-slider
-              :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
-              :sequentialSteps="item.sequentialSteps"
-              :tierIndex="index"
-              :mainActiveIndex="activeIndex"
-              :type="item.type"
-              :key="item.id"
-              ref="interactiveSlider">
-              </interactive-slider>
+            <interactive-slider
+            :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            :sequentialSteps="item.sequentialSteps"
+            :tierIndex="index"
+            :mainActiveIndex="activeIndex"
+            :type="item.type"
+            :key="item.id"
+            ref="interactiveSlider">
+            </interactive-slider>
           </template>
-          <template v-else>
+          <template>
             <tier
+            :slideIndex="getSlideIndex(slideProps.sceneIndex, index)"
             :class="[sceneNumber(slideProps.sceneIndex), ('t' + addZero(index)), item.type]"
             :key="item.id"
             :tier="item"
@@ -35,7 +36,8 @@
                 :rowName="(tierProps.tierName + '-r' + index)"
                 :sceneNumber="tierProps.sceneNumber"
                 :slideIndex="tierProps.slideIndex"
-                :mainActiveIndex="activeIndex">
+                :mainActiveIndex="activeIndex"
+                :intActiveIndex="tierProps.intActiveIndex">
                   <template slot="panel" scope="rowProps">
                     <panel v-for="(item, index) in item.panels"
                     :key="item.id"
@@ -46,6 +48,7 @@
                     :panelName="(rowProps.rowName + '-p' + index)"
                     :panelArray="panelArray"
                     :sceneNumber="rowProps.sceneNumber"
+                    :intActiveIndex="rowProps.intActiveIndex"
                     ref="panel">
                     </panel>
                   </template>
@@ -91,6 +94,8 @@ export default {
   components: { Tier, Row, Panel, Interaction, InteractiveSlider },
   data() {
     return {
+      areTiersCounted: false,
+      slideArray: [],
       story: data.story,
       activeIndex: 0,
       activeTierType: '',
@@ -102,7 +107,7 @@ export default {
         watchSlidesProgress: true,
         watchSlidesVisibility: true,
         autoplay: false,
-        speed: 175,
+      //  speed: 175,
         // For testing only:
         keyboardControl: true,
       },
@@ -193,6 +198,29 @@ export default {
   },
 
   methods: {
+    getSlideIndex(sceneIndex, tierIndex) {
+      const obj = {};
+      obj[sceneIndex] = tierIndex;
+      if (!this.areTiersCounted) {
+        if (this.slideArray.length >= this.tierArray.length) {
+          this.areTiersCounted = true;
+        }
+        else {
+          this.slideArray.push(obj);
+        }
+      }
+      const slideIndex = this.setSlideIndex(sceneIndex, tierIndex);
+      return slideIndex;
+    },
+    setSlideIndex(sceneIndex, tierIndex) {
+        let slideIndex;
+        this.slideArray.forEach((o) => {
+          if (Object.entries(o)[0].toString() === [sceneIndex, tierIndex].toString()) {
+            slideIndex = this.slideArray.indexOf(o);
+          }
+        });
+        return slideIndex;
+    },
     // returns array of the INDEXES of all  tiers of given type
     tTypeIndArr(tType) {
        const tArr = this.tierArray;
@@ -208,30 +236,18 @@ export default {
     sceneNumber(scInd) {
       return ('s' + this.addZero(scInd));
     },
-    tierIndex(sceneInd) {
+    sceneTiersArray(sceneInd) {
       const sceneTiers = [];
-      this.story.chapters.forEach((obj) => {
-        obj.scenes.forEach((o) => {
-          if (obj.scenes.indexOf(o) === sceneInd) {
-            o.tiers.forEach((yo) => {
-             sceneTiers.push(yo);
+      this.story.chapters.forEach((ch) => {
+        ch.scenes.forEach((sc) => {
+          if (ch.scenes.indexOf(sc) === sceneInd) {
+            sc.tiers.forEach((t) => {
+             sceneTiers.push(t);
             });
           }
         });
       });
       return sceneTiers;
-    },
-    SceneIndex() {
-      const scenesArr = [];
-      this.story.chapters.forEach((obj) => {
-        obj.scenes.forEach((o) => {
-          scenesArr.push(o);
-        });
-      });
-      scenesArr.forEach((t) => {
-
-      });
-      return scenes;
     },
     // sets the component activeIndex numeric value as equal to the main swiper object activeIndex
     setActiveIndex() {
@@ -253,7 +269,6 @@ export default {
 
   },
   created() {
-
   },
   mounted() {
     const self = this;
@@ -261,28 +276,26 @@ export default {
     this.setActiveIndex();
     MainEventbus.$emit('the-active-tier', self.activeType, self.activeIndex);
 
-
     // returns an OBJECT with all interactive tier indexes as numeric keys
-    // and their respective sub-sliders' swiper objects as values
-    function pushIntSlideIndex() {
-      const sliders = self.$refs.interactiveSlider;
+    // and their respective sub-slides' swiper objects as values
+    function pushIntSliderIndex() {
+      const slides = self.$refs.interactiveSlider;
       const indexes = self.tTypeIndArr('interactive');
-      for (let i = 0; i < sliders.length; i += 1) {
-         sliders[i].slideIndex = indexes[i];
+      for (let i = 0; i < slides.length; i += 1) {
+         slides[i].slideIndex = indexes[i];
       }
     }
-    pushIntSlideIndex();
+    pushIntSliderIndex();
 
-    function pushStaticSlideIndex() {
-      const sliders = self.$refs.tier;
-      const indexes = self.tTypeIndArr('static');
-      for (let i = 0; i < sliders.length; i += 1) {
-         sliders[i].slideIndex = indexes[i];
-      }
-    }
-    pushStaticSlideIndex();
+    // function pushSlideIndex() {
+    //   const slides = self.$refs.tier;
+    //   const indexes = Object.keys(self.tierArray);
+    //   for (let i = 0; i < slides.length; i += 1) {
+    //      slides[i].slideIndex = indexes[i];
+    //   }
+    // }
+    // pushSlideIndex();
 
-   console.log(self.tTypeIndArr('interactive'));
 
 //     console.log(this.typeArray);
 //     const allIntIndexes = [];
