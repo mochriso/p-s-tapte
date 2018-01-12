@@ -4,7 +4,8 @@
         <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
           <template v-if="item.interaction">
               <interaction
-              :intSwiperTranslate="intSwiperTranslate"
+              :mainSlideIndex="slideIndex"
+              :intActiveIndex="intActiveIndex"
               :interactionIndex="index"
               :isMainActiveSlide="isMainActiveSlide"
               :key="item.id"
@@ -17,6 +18,7 @@
               </interaction>
           </template>
         </swiper-slide>
+        <swiper-slide />
     </swiper>
   </div>
 </template>
@@ -32,7 +34,6 @@ import Tier from './Tier';
 import Row from './Row';
 
 import Panel from './Panel';
-
 
 import { IntEventbus } from './inteventbus';
 
@@ -141,6 +142,7 @@ export default {
     interactiveSwiper.on('transitionStart', () => {
         self.setIntActiveIndex();
       });
+
 
     // SET ACTIVEINDEX THROUGH TRANSITIONSTART
        // interactiveSwiper.on('transitionStart', () => {

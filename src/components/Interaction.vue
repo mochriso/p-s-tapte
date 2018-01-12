@@ -2,8 +2,10 @@
   <component
   :is="activeComponent"
   v-show="showInt"
+  :mainSlideIndex="mainSlideIndex"
+  :intActiveIndex="intActiveIndex"
+  :interactionIndex="interactionIndex"
   :isMainActiveSlide="isMainActiveSlide"
-  :intSwiperTranslate="intSwiperTranslate"
   :translateVal="translateVal"
   :movingFwdVal="movingFwdVal"
   :movingBwdVal="movingBwdVal"
@@ -11,7 +13,7 @@
   :animatingBwdVal="animatingBwdVal"
   :transitionVal="transitionVal"
   :progressVal="progressVal"
-  :cycle="cycle"
+  :intState.sync="intState"
   :animation="this.animation"
   class="touch-behaviour"
   :class="this.animation.animEvent"
@@ -41,11 +43,10 @@ export default {
     FadeToBlack,
   },
   props: {
-    intSwiper: {
+    mainSlideIndex: {
       required: false,
     },
-    intSwiperTranslate: {
-    //  type: Number,
+    intSwiper: {
       required: false,
     },
     interactionSpace: {
@@ -58,6 +59,10 @@ export default {
     },
     animation: {
       type: Object,
+      required: true,
+    },
+    intActiveIndex: {
+      type: Number,
       required: true,
     },
     interactionIndex: {
@@ -90,7 +95,6 @@ export default {
       idleStyle: {
         display: 'none',
       },
-      intActiveIndex: 0,
   //    isResponding: false,
   //    sumPlayedInteractions: 0,
       showInt: true,
@@ -110,7 +114,7 @@ export default {
     //  touchStart: false,
       sliderMove: false,
   //    touchEnd: false,
-      cycle: 'start',
+      intState: 'idleStart',
     };
   },
   computed: {
@@ -184,45 +188,45 @@ export default {
    //    if (this.hasTranisitionEnded) {
    //      if (this.isNextInteraction) {
    //        this.showInt = true;
-   //        this.cycle = 'start';
+   //        this.intState = 'idleStart';
    //      }
    //      else if (this.isPreviousInteraction) {
    //        this.showInt = true;
-   //        this.cycle = 'end';
-   //        console.log('cycle End?', this.cycle);
+   //        this.intState = 'idleEnd';
+   //        console.log('intState idleEnd?', this.intState);
    //      }
    //      else if (this.interactionIndex > this.intActiveIndex) {
    //        this.showInt = false;
-   //        this.cycle = 'start';
-   //        console.log('cycle start?', this.cycle);
+   //        this.intState = 'idleStart';
+   //        console.log('intState idleStart?', this.intState);
    //      }
    //    }
    //  },
    //  translateVal(newVal, oldVal) {
    //    if (this.sliderMove) {
    //      if (newVal < oldVal) {
-   //        this.cycle = 'movingFwd';
+   //        this.intState = 'movingFwd';
    //        this.movingBwdVal = '';
    //        this.movingFwdVal = newVal;
    //      }
    //      else {
-   //        this.cycle = 'movingBwd';
+   //        this.intState = 'movingBwd';
    //        this.movingFwdVal = '';
    //        this.movingBwdVal = newVal;
    //      }
    //    }
    //  },
-   //  cycle(newVal, oldVal) {
+   //  intState(newVal, oldVal) {
    //  },
    //  isTransitioning() {
    //    if (this.isTransitioning) {
-   //     if (this.cycle === 'movingFwd') {
-   //       this.cycle = 'animatingFwd';
+   //     if (this.intState === 'movingFwd') {
+   //       this.intState = 'animatingFwd';
    //       this.animatingBwdVal = '';
    //       this.animatingFwdVal = this.translateVal;
    //     }
-   //     else if (this.cycle === 'movingBwd') {
-   //       this.cycle = 'animatingBwd';
+   //     else if (this.intState === 'movingBwd') {
+   //       this.intState = 'animatingBwd';
    //       this.animatingfwdVal = '';
    //       this.animatingBwdVal = this.translateVal;
    //     }
@@ -231,9 +235,9 @@ export default {
 //    isResponding(val) {
 //        this.$emit('is-it-responding', val);
 //    },
-    // cycle(newVal, oldVal) {
+    // intState(newVal, oldVal) {
     //   if (this.sliderMove) {
-    //     if (oldVal === 'start') {
+    //     if (oldVal === 'idleStart') {
     //       if (newVal === 'movingBwd') {
     //       //  this.isResponding = false;
     //       }
@@ -243,7 +247,7 @@ export default {
     // //        }
     // //      }
     //     }
-    //     else if (oldVal === 'end') {
+    //     else if (oldVal === 'idleEnd') {
     // //      if (newVal === 'movingBwd') {
     // //      }
     //       if (newVal === 'movingFwd') {
@@ -259,13 +263,13 @@ export default {
     // },
   },
   created() {
-    // if (this.cycle === 'start') {
-    //     this.cycle = 'movingFwd';
-    //     console.log('cycle movingFwd?', this.cycle);
+    // if (this.intState === 'idleStart') {
+    //     this.intState = 'movingFwd';
+    //     console.log('intState movingFwd?', this.intState);
     // }
-    // else if (this.cycle === 'end') {
-    //     this.cycle = 'movingBwd';
-    //     console.log('cycle movingBwd?', this.cycle);
+    // else if (this.intState === 'idleEnd') {
+    //     this.intState = 'movingBwd';
+    //     console.log('intState movingBwd?', this.intState);
     // }
 
     // function Eventbroker(emitRef, emittedVal, localVal) {
@@ -304,23 +308,16 @@ export default {
     //   }
     // });
 
-    this.$on('is-main-active-slide', () => {
-      MainEventbus.$on('int-transitionEnd', (swiper) => {
-          this.isTransitioning = false;
-          this.hasTranisitionEnded = true;
-          this.intActiveIndex = swiper.activeIndex;
-      });
-    });
 
     const blockWrongDirection = function fn(sliderData, localVersion) {
       if (this.isPreviousInteraction) {
-        if (this.cycle === 'movingFwd') {
+        if (this.intState === 'movingFwd') {
           this[localVersion] = '';
         }
         this[localVersion] = sliderData;
       }
       else if (this.isNextInteraction) {
-        if (this.cycle === 'movingBwd') {
+        if (this.intState === 'movingBwd') {
           this[localVersion] = '';
         }
         this[localVersion] = sliderData;
@@ -385,10 +382,7 @@ export default {
     this.$nextTick(() => {
       // console.log(this.$parent.$parent.$parent.$refs.interactiveSlider.swiper);
       const parentIntSwiper = this.$parent.$parent.$parent.$refs.interactiveSlider.swiper;
-      console.log('width:' + parentIntSwiper.width, 'height:' + parentIntSwiper.height);
-      parentIntSwiper.on('xx', (swiper, xx) => {
-        // skdfh
-       });
+  //  console.log('width:' + parentIntSwiper.width, 'height:' + parentIntSwiper.height);
     });
   },
   beforeDestroy() {

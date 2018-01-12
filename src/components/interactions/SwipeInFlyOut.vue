@@ -1,5 +1,5 @@
 <template lang="html">
-    <div :style="translateStyle">
+    <div :style="[styles]">
       <slot>
       </slot>
     </div>
@@ -20,16 +20,21 @@
 // >
 //   </transition>
 
+import { IntEventbus } from '../inteventbus';
+
 export default {
   mixins: [],
   name: 'swipe-in-fly-out',
-  props: ['isMainActiveSlide', 'animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
+  props: ['mainSlideIndex', 'intActiveIndex', 'isMainActiveSlide', 'animation', 'interactionIndex', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
   components: { },
   data() {
     return {
+      slideChange: '',
       intSwiperTranslate: 0,
       direction: this.animation.direction,
-      state: 'idle',
+      intState: 'idleStart',
+      idleStart: true,
+      idleEnd: false,
       // styles: {
       //   left: '100vw',
       //   transform: '',
@@ -41,79 +46,152 @@ export default {
   computed: {
     translateStyle() {
       const ob = {};
-    //  ob.transform = ('translateX' + '(' + this.intSwiperTranslate + 'px)');
+      ob.transform = ('translateX' + '(' + this.intSwiperTranslate + 'px)');
       return ob;
     },
     SpeedUpTranslate() {
       return (this.translateVal * 2);
     },
     styles() {
-      const obj = {};
-      const startPosVal = ((this.interactionIndex + 1) * 100) + '%';
-      obj.left = startPosVal;
-      const start = () => {
-      };
-      const end = () => {
-        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-      };
-      const movingFwd = () => {
-        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-      };
-      const movingBwd = () => {
-        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-      };
-      const animatingFwd = () => {
-        obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
-        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-      };
-      const animatingBwd = () => {
-        obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
-        obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
-      };
-      const cycleArr = [start, movingFwd, animatingFwd, animatingBwd, end, movingBwd];
+      let obj = {};
+      const swiperTranslate = this.intSwiperTranslate;
+      const swiperTranslateReversed = (~swiperTranslate + 1) * 2;
+      const bWindow = window.innerWidth;
+      const offsetValue = (this.interactionIndex + 1);
+      const leftOffset = (bWindow * offsetValue);
+      const rightOffset = (-bWindow * offsetValue);
+      const translateNormal = (swiperTranslate + leftOffset);
+      const transNormRevvedDoubled = ((~translateNormal + 1) * 2);
+      const oppositeStartValue = (transNormRevvedDoubled - rightOffset);
+      const translateOpposite = ((transNormRevvedDoubled * 2) - (rightOffset * 3));
+      console.log('translateOpposite', translateOpposite);
+      const normalTranslateStyle = ('translateX(' + translateNormal + 'px)');
+      const oppositeTranslateStyle = ('translateX(' + translateOpposite + 'px)');
+      const oppositeIdleStart = ('translateX(' + oppositeStartValue + 'px)');
+      const oppositeIdleEnd = ('translateX(' + (leftOffset * 2) + 'px)');
+      const normalIdleStart = normalTranslateStyle;
+      const normalIdleEnd = 'translateX(0)';
+    //  console.log(oppositeTranslateStyle, normalTranslateStyle);
+      // SETTING THE STYLES //
+      const setRightStyle = (translate, start, end) => {
+        const idleStart = () => {
+          obj.transform = start;
+        };
+        const idleEnd = () => {
+          obj.transform = end;
+        };
+        const translating = () => {
+          if (this.direction === 'normal') {
+            obj.transform = translate;
+          }
+          else if (this.direction === 'opposite') {
+            obj.transform = translate;
+          }
+        };
+        const transitioning = () => {
+            obj.transform = translate;
+        };
+        const intStateArr = [idleStart, idleEnd, translating, transitioning];
 
-      for (let i = 0; i < cycleArr.length; i += 1) {
-        if (cycleArr[i].name === this.cycle) {
-           cycleArr[i]();
-           // console.log(statesArr[i].name, this.state);
-          //   console.log(obj);
+        for (let i = 0; i < intStateArr.length; i += 1) {
+          if (intStateArr[i].name === this.intState) {
+            obj = {};
+            intStateArr[i]();
+             // console.log(statesArr[i].name, this.state);
+            //   console.log(obj);
+          }
         }
-      }
-        // if (this.direction === 'opposite') {
-        //   val = 'translateX' + '(' + Math.abs(this.translateVal) + 'px)';
-        // }
+      };
 
-        // if (this.state === 'ended') {
-        //   obj.left = '-80vw';
-        //   // obj.transition = '';
-        //   // val = '';
-        // }
-        // else if (this.state === 'leaving') {
-        //   console.log(val);
-        // }
-        // else if (this.state === 'operating') {
-        //   val = 'translateX' + '(' + this.translateVal + 'px)';
-        // }
-        // else if (this.state === 'entering') {
-        //   val = 'translateX' + '(' + this.translateVal + 'px)';
-        // }
-        // else if (this.state === 'idle') {
-        //   obj.left = '80vw';
-        //   val = 'translateX' + '(' + this.translateVal + 'px)';
-        // }
-        // obj.transform = val;
-       return (obj);
-      },
+      if (this.direction === 'normal') {
+        setRightStyle(normalTranslateStyle, normalIdleStart, normalIdleEnd);
+      }
+      else if (this.direction === 'opposite') {
+        setRightStyle(oppositeTranslateStyle, oppositeIdleStart, oppositeIdleEnd);
+      }
+      // testing //
+      if (this.interactionIndex === 0 && this.mainSlideIndex === 7) {
+        console.log('swiperTranslate', swiperTranslate, 'swiperTranslateReversed', swiperTranslateReversed);
+        console.log(obj);
+      }
+      // finished testing//
+      return (obj);
+    },
+
+    //
+    //     // if (this.state === 'ended') {
+    //     //   obj.left = '-80vw';
+    //     //   // obj.transition = '';
+    //     //   // val = '';
+    //     // }
+    //     // else if (this.state === 'leaving') {
+    //     //   console.log(val);
+    //     // }
+    //     // else if (this.state === 'operating') {
+    //     //   val = 'translateX' + '(' + this.translateVal + 'px)';
+    //     // }
+    //     // else if (this.state === 'entering') {
+    //     //   val = 'translateX' + '(' + this.translateVal + 'px)';
+    //     // }
+    //     // else if (this.state === 'idle') {
+    //     //   obj.left = '80vw';
+    //     //   val = 'translateX' + '(' + this.translateVal + 'px)';
+    //     // }
+    //     // obj.transform = val;
+    //    return (obj);
+    //   },
     // transition() {
     //   const val = this.transitionVal + 'ms';
     //   const obj = {};
     //   obj.transitionDuration = val;
-    //   return (obj);
-    // },
   },
   watch: {
+    intActiveIndex(newVal, oldVal) {
+      let upDown;
+      if (newVal > oldVal) {
+        upDown = 'up';
+      }
+      else {
+        upDown = 'down';
+        }
+      if (newVal === this.interactionIndex) {
+        this.slideChange = upDown + 'ToThis';
+      }
+      else if (newVal === (this.interactionIndex - 1)) {
+        this.slideChange = upDown + 'ToPrev';
+      }
+      else if (newVal === (this.interactionIndex + 1)) {
+        this.slideChange = upDown + 'ToNext';
+      }
+      else if (newVal < (this.interactionIndex - 1)) {
+        this.slideChange = upDown + 'ToBeyondPrev';
+      }
+      else if (newVal > (this.interactionIndex + 1)) {
+        this.slideChange = upDown + 'ToBeyondNext';
+      }
+    },
+    slideChange(newVal) {
+      this.emitSlideChange(newVal);
+    },
+    intState(newVal, oldVal) {
+      this.emitIntState(newVal);
+      if (newVal === 'idleStart') {
+        this.idleEnd = false;
+        this.idleStart = true;
+      }
+      else if (newVal === 'idleEnd') {
+        this.idleStart = false;
+        this.idleEnd = true;
+      }
+    },
   },
   methods: {
+    emitSlideChange(newVal) {
+      IntEventbus.$emit('int-slide-change', newVal, this.interactionIndex, this.mainSlideIndex);
+    },
+    emitIntState(newVal) {
+      this.$emit('update:intState', newVal);
+    },
   //   beforeEnter(el) {
   //   this.state = 'idle';
   //   console.log('beforeEnter: idle?', this.state);
@@ -123,13 +201,13 @@ export default {
   //   enter(el, done) {
   //     this.state = 'enterDrag';
   //     console.log('enterDrag?', this.state);
-  //     this.$on('cycle-animating', () => {
+  //     this.$on('intState-animating', () => {
   //     if (this.state === 'enterDrag') {
   //       this.state = 'enterRelease';
   //       console.log('enterRelease?', this.state);
   //     }
   //     });
-  //     this.$on('cycle-end', () => {
+  //     this.$on('intState-idleEnd', () => {
   //       done();
   //       console.log('ended youpi');
   //     });
@@ -154,13 +232,13 @@ export default {
   //   leave(el, done) {
   //     this.state = 'leaveDrag';
   //     console.log('leaveDrag?', this.state);
-  //     this.$on('cycle-animating', () => {
+  //     this.$on('intState-animating', () => {
   //       if (this.state === 'leaveDrag') {
   //         this.state = 'leaveRelease';
   //         console.log('leaveRelease?', this.state);
   //       }
   //     });
-  //     this.$on('cycle-start', () => {
+  //     this.$on('intState-idleStart', () => {
   //       done();
   //     });
   //   //  setTimeout(done, 400);
@@ -189,7 +267,23 @@ export default {
     //  console.log('width:' + parentIntSwiper.width, 'height:' + parentIntSwiper.height);
       parentIntSwiper.on('setTranslate', (swiper, translate) => {
         this.intSwiperTranslate = translate;
-        console.log(this.intSwiperTranslate, translate);
+      //  console.log(this.intSwiperTranslate, translate);
+      });
+      parentIntSwiper.on('transitionStart', (swiper) => {
+        this.intState = 'transitioning';
+      });
+      parentIntSwiper.on('sliderMove', (swiper, touchMove) => {
+        parentIntSwiper.once('setTranslate', () => {
+          this.intState = 'translating';
+        });
+      });
+      parentIntSwiper.on('transitionEnd', (swiper) => {
+         if (this.intActiveIndex <= this.interactionIndex) {
+           this.intState = 'idleStart';
+         }
+         else if (this.intActiveIndex > this.interactionIndex) {
+           this.intState = 'idleEnd';
+         }
       });
     });
   },
@@ -200,11 +294,17 @@ export default {
 </script>
 
 <style lang="scss">
+.idle-start {
+  left: 105vw;
+}
+.idle-end {
+  left: 0;
+}
 .interaction-item {
   position: absolute;
   bottom: 0px;
-  width: 120%;
-  height: 120%;
+  width: 100%;
+  height: 100%;
 }
 // .v-enter {
 // // transform: translateX(90vw);

@@ -25,6 +25,34 @@ export default {
       }
         return (num.toString());
     },
+    // booleanToggle(prop) {
+    //   if (!prop) {
+    //     prop = true;
+    //   }
+    //   else {
+    //     prop = false;
+    //   }
+    // },
+// --- INTERACTION CALLBACK TYPES ---
+    toggleSwapContextArt() {
+      if (!this.swapped) {
+        this.swapped = true;
+      }
+      else {
+        this.swapped = false;
+      }
+    },
+    FadeToBlack() {
+    },
+    mainSlideNext() {
+    },
+// --- INTERACTION CALLBACK TIMINGS ---
+    onIntSlideChange() {
+    },
+    onInteractionEnd() {
+    },
+    onPrevCallbackEnd() {
+    },
   },
   computed: {
     panelArt() {

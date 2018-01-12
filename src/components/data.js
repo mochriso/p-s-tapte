@@ -137,6 +137,10 @@ export default {
                               animEvent: 'swipeInFlyOut',
                               axis: 'X',
                               direction: 'opposite',
+                              callback: {
+                                type: 'toggleSwapContextArt',
+                                timing: 'onIntSlideChange',
+                              },
                             },
                             interactionItem: {
                               animAsset: 't04-int_el0.png',
@@ -150,6 +154,10 @@ export default {
                             animEvent: 'swipeInFlyOut',
                             axis: 'X',
                             direction: 'normal',
+                            callback: {
+                              type: 'toggleSwapContextArt',
+                              timing: 'onIntSlideChange',
+                            },
                           },
                           interactionItem: {
                             animAsset: 't04-int_el0.png',
@@ -163,19 +171,10 @@ export default {
                           animEvent: 'swipeInFlyOut',
                           axis: 'X',
                           direction: 'opposite',
-                        },
-                        interactionItem: {
-                          animAsset: 't04-int_el0.png',
-                        },
-                      },
-                    },
-                    { interaction:
-                      { gesture: 'none',
-                        mapping: 'viewport',
-                        animation: {
-                          animEvent: 'swipeInFlyOut',
-                          axis: 'X',
-                          direction: 'opposite',
+                          callback: {
+                            type: 'toggleSwapContextArt',
+                            timing: 'onIntSlideChange',
+                          },
                         },
                         interactionItem: {
                           animAsset: 't04-int_el0.png',
@@ -220,23 +219,19 @@ export default {
                         { gesture: 'swipe',
                           mapping: 'viewport',
                           animation: {
-                            animEvent: 'fadeToBlack',
+                            animEvent: 'swipeInFlyOut',
                             axis: 'X',
                             direction: 'opposite',
-                          },
-                          interactionItem: {
-                            animAsset: 't06-r1-p0-spr.jpg',
-                          },
-                        },
-                    },
-                    { interaction:
-                        { gesture: 'none',
-                          mapping: 'none',
-                          animation: {
-                            animEvent: 'fadeToBlack',
-                            axis: 'none',
-                            direction: 'none',
-                            callback: 'mainSliderToNext',
+                            callback: [
+                              {
+                                type: 'FadeToBlack',
+                                timing: 'onInteractionEnd',
+                              },
+                              {
+                                type: 'mainSlideNext',
+                                timing: 'onPrevCallbackEnd',
+                              },
+                            ],
                           },
                           interactionItem: {
                             animAsset: 't06-r1-p0-spr.jpg',
@@ -244,10 +239,6 @@ export default {
                         },
                     },
                   ],
-                  animation: {
-                    effect: 'fadeToBlack',
-                  },
-
                 },
               ],
             },

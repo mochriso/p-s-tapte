@@ -56,6 +56,7 @@ module.exports = {
     'import/no-duplicates': 'off',
     'arrow-body-style': 'off',
     'no-prototype-builtins': 'off',
-    'no-param-reassign': ["error", { "props": true, "ignorePropertyModificationsFor": ["el"] }]
+    'no-param-reassign': ["error", { "props": true, "ignorePropertyModificationsFor": ["el"] }],
+    'no-bitwise': ["error", { "allow": ["~"] }]
   }
 }

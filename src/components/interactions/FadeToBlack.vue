@@ -23,7 +23,7 @@
 export default {
   mixins: [],
   name: 'fade-to-black',
-  props: ['isMainActiveSlide', 'animation', 'interactionIndex', 'cycle', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
+  props: ['isMainActiveSlide', 'animation', 'interactionIndex', 'intState', 'translateVal', 'movingFwdVal', 'movingBwdVal', 'transitionVal', 'progressVal', 'animatingBwdVal', 'animatingFwdVal'],
   components: { },
   data() {
     return {
@@ -44,12 +44,12 @@ export default {
     styles() {
     const obj = {};
     //   //    console.log('idle');
-    const startPosVal = ((this.interactionIndex + 1) * 100) + '%';
-    obj.left = startPosVal;
-    const start = () => {
+    const idleStartPosVal = ((this.interactionIndex + 1) * 100) + '%';
+    obj.left = idleStartPosVal;
+    const idleStart = () => {
 
     };
-    const end = () => {
+    const idleEnd = () => {
       obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
     };
     const movingFwd = () => {
@@ -66,11 +66,11 @@ export default {
       obj.transition = ('all ' + this.transitionVal + 'ms ease-out');
       obj.transform = ('translateX' + '(' + this.SpeedUpTranslate + 'px)');
     };
-    const cycleArr = [start, movingFwd, animatingFwd, animatingBwd, end, movingBwd];
+    const intStateArr = [idleStart, movingFwd, animatingFwd, animatingBwd, idleEnd, movingBwd];
 
-    for (let i = 0; i < cycleArr.length; i += 1) {
-      if (cycleArr[i].name === this.cycle) {
-         cycleArr[i]();
+    for (let i = 0; i < intStateArr.length; i += 1) {
+      if (intStateArr[i].name === this.intState) {
+         intStateArr[i]();
          // console.log(statesArr[i].name, this.state);
         //   console.log(obj);
       }
@@ -119,13 +119,13 @@ export default {
   //   enter(el, done) {
   //     this.state = 'enterDrag';
   //     console.log('enterDrag?', this.state);
-  //     this.$on('cycle-animating', () => {
+  //     this.$on('intState-animating', () => {
   //     if (this.state === 'enterDrag') {
   //       this.state = 'enterRelease';
   //       console.log('enterRelease?', this.state);
   //     }
   //     });
-  //     this.$on('cycle-end', () => {
+  //     this.$on('intState-idleEnd', () => {
   //       done();
   //       console.log('ended youpi');
   //     });
@@ -150,13 +150,13 @@ export default {
   //   leave(el, done) {
   //     this.state = 'leaveDrag';
   //     console.log('leaveDrag?', this.state);
-  //     this.$on('cycle-animating', () => {
+  //     this.$on('intState-animating', () => {
   //       if (this.state === 'leaveDrag') {
   //         this.state = 'leaveRelease';
   //         console.log('leaveRelease?', this.state);
   //       }
   //     });
-  //     this.$on('cycle-start', () => {
+  //     this.$on('intState-idleStart', () => {
   //       done();
   //     });
   //   //  setTimeout(done, 400);

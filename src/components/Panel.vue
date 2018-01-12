@@ -3,18 +3,11 @@
   :class="[this.panelName, panel.type]"
   :style="styler('wrap')">
     <slot></slot>
-    <template v-if="panel.swapped">
+    <template>
       <img
       :class="panel.effect"
       :style="styler('img')"
-      :src="swappedPanelArt"
-      :alt="this.panelName">
-    </template>
-    <template v-else>
-      <img
-      :class="panel.effect"
-      :style="styler('img')"
-      :src="panelArt"
+      :src="swapped ? swappedPanelArt :  panelArt"
       :alt="this.panelName">
     </template>
   </div>
@@ -28,6 +21,8 @@
 // 'object-position': panel.position
 import addTwoZeroes from './mixins';
 
+import toggleSwapContextArt from './mixins';
+
 import panelArt from './mixins';
 
 import swappedPanelArt from './mixins';
@@ -35,11 +30,12 @@ import swappedPanelArt from './mixins';
 import { IntEventbus } from './inteventbus';
 
 export default {
-  mixins: [panelArt, swappedPanelArt, addTwoZeroes],
+  mixins: [toggleSwapContextArt, panelArt, swappedPanelArt, addTwoZeroes],
   name: 'panel',
   props: ['intActiveIndex', 'panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex', 'slideIndex'],
   data() {
     return {
+      swapped: false,
       coordinates: {
         objectHeight: '',
         objectWidth: '',
@@ -98,7 +94,19 @@ export default {
     },
   },
   created() {
-
+    IntEventbus.$on('int-slide-change', (val, interactionIndex, SlideIndex) => {
+      if (SlideIndex === this.slideIndex) {
+        if (this.panel.interactionStep === interactionIndex) {
+          console.log('recieved int-slide-change', val, interactionIndex, SlideIndex);
+          if (val === 'upToNext') {
+            this.swapped = true;
+          }
+          else if (val === 'downToThis') {
+            this.swapped = false;
+          }
+        }
+      }
+    });
   },
   mounted() {
     this.$nextTick(() => {
@@ -109,6 +117,9 @@ export default {
         this.setEmitCoordinates();
       }
     });
+  },
+  beforeDestroy() {
+    IntEventbus.$off();
   },
 };
 </script>
