@@ -1,25 +1,25 @@
 <template lang="html">
-  <div>
+  <div class="interactions-container">
     <swiper :options="interactiveSliderOption" ref="interactiveSlider" class="interactive-slider">
         <swiper-slide class="slide-interactive" v-for="(item, index) in sequentialSteps" :key="item.id">
-          <template v-if="item.interaction">
-              <interaction
-              :mainSlideIndex="slideIndex"
-              :intActiveIndex="intActiveIndex"
-              :interactionIndex="index"
-              :isMainActiveSlide="isMainActiveSlide"
-              :key="item.id"
-              :mainActiveIndex="mainActiveIndex"
-              :sceneNumber="sceneNumber"
-              :animAsset="item.interaction.interactionItem.animAsset"
-              :animation="item.interaction.animation"
-              :interactionSpace="interactionSpaces[index]"
-              ref="interaction">
-              </interaction>
-          </template>
         </swiper-slide>
         <swiper-slide />
     </swiper>
+    <interaction v-for="(item, index) in sequentialSteps"
+    class="interaction"
+    @callback="distrIntCallback"
+    :mainSlideIndex="slideIndex"
+    :intActiveIndex="intActiveIndex"
+    :interactionIndex="index"
+    :isMainActiveSlide="isMainActiveSlide"
+    :key="item.id"
+    :mainActiveIndex="mainActiveIndex"
+    :sceneNumber="sceneNumber"
+    :animAsset="item.interaction.interactionItem.animAsset"
+    :animation="item.interaction.animation"
+    :interactionSpace="interactionSpaces[index]"
+    ref="interaction">
+    </interaction>
   </div>
 </template>
 
@@ -90,6 +90,9 @@ export default {
     },
   },
   methods: {
+    distrIntCallback(cbContext, cbType, cbTransition) {
+      this.$emit('intcallback', cbContext, cbType, cbTransition);
+    },
     setIntSwiperTranslate(translate) {
       this.intSwiperTranslate = translate;
       console.log(this.intSwiperTranslate);
@@ -139,7 +142,7 @@ export default {
     const self = this;
     this.setIntActiveIndex();
 
-    interactiveSwiper.on('transitionStart', () => {
+    interactiveSwiper.on('setTransition', () => {
         self.setIntActiveIndex();
       });
 
@@ -254,13 +257,24 @@ export default {
 </script>
 
 <style lang="scss">
+.interaction {
+  z-index: 1000;
+  position: absolute;
+  will-change: transform;
+}
+.interactions-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 .interactive-slider {
   position: absolute;
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow:hidden;
+  overflow: hidden;
   .swiper-slide-prev, .swiper-slide-next  {
     .tier {
       opacity: 1;
@@ -282,6 +296,6 @@ export default {
     }
 }
 .interactive-slider {
-    z-index: 50;
+    z-index: 100;
 }
 </style>

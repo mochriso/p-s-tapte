@@ -75,7 +75,7 @@ export default {
         //   console.log(obj);
       }
     }
-      // if (this.direction === 'opposite') {
+      // if (this.direction === 'opposingDir') {
       //   val = 'translateX' + '(' + Math.abs(this.translateVal) + 'px)';
       // }
 

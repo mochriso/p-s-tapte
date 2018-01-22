@@ -1,5 +1,6 @@
 export default {
   methods: {
+  // ---ANIMATION CALLBACKS PUT HERE LATER--- //
   // Boolean Comparing two arguments
     same(ind, acInd) {
       if (ind === acInd) {

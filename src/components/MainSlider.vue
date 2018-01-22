@@ -1,5 +1,14 @@
 <template lang="html">
-<div class="sliding-container">
+<div class="main-slider-container">
+  <transition
+  :name="topLevelOverlayTransition"
+  @before-enter="topLevelBeforeEnter"
+  @after-enter="topLevelAfterEnter"
+  @before-leave="topLevelBeforeLeave"
+  @afterLeave="topLevelAfterLeave">
+    <div v-if="topLevelOverlay" class="t-l-overlay--idle" :class="topLevelOverlayTransition">
+    </div>
+  </transition>
   <swiper :options="mainSliderOption" ref="mainSlider" class="main-slider" v-for="(item,index) in story" key="item.id">
     <template v-for="(item,index) in story.chapters">
       <template v-for="(scene,index) in item.scenes">
@@ -8,6 +17,7 @@
           <template v-if="item.type === 'interactive'">
             <interactive-slider
             :sceneNumber="('s' + addZero(slideProps.sceneIndex))"
+            @intcallback="intCallbackMethod"
             :sequentialSteps="item.sequentialSteps"
             :tierIndex="index"
             :mainActiveIndex="activeIndex"
@@ -70,6 +80,8 @@
 // :swipername="intSwiper(index)"
 import { MainEventbus } from './maineventbus';
 
+import { IntEventbus } from './inteventbus';
+
 import data from './data';
 
 import Interaction from './Interaction';
@@ -94,6 +106,11 @@ export default {
   components: { Tier, Row, Panel, Interaction, InteractiveSlider },
   data() {
     return {
+      topLevelOverlay: false,
+      topLevelOverlayTransition: '',
+      intCallback: {
+        type: '',
+      },
       areTiersCounted: false,
       slideArray: [],
       story: data.story,
@@ -146,7 +163,6 @@ export default {
 //      });
       return allPanels;
     },
-
     // returns the type value of the current active tier, as string
     activeType() {
       const tArr = this.tierArray;
@@ -196,8 +212,47 @@ export default {
       return allTypes;
     },
   },
-
+  watch: {
+    intCallback: {
+      deep: true,
+      handler(newVal) {
+        //
+      },
+    },
+  },
   methods: {
+    topLevelBeforeEnter(el) {
+      this.mainSwiper.lockSwipes();
+    },
+    topLevelAfterEnter(el) {
+      this.handleCallbackAction();
+    },
+    topLevelBeforeLeave(el) {
+      //
+    },
+    topLevelAfterLeave(el) {
+      this.mainSwiper.unlockSwipes();
+    },
+      // interaction callback //
+    intCallbackMethod(cbContext, cbType, cbTransition) {
+      if (cbContext === 'mainSlider') {
+        this.topLevelOverlay = true;
+        this.topLevelOverlayTransition = cbTransition;
+        this.intCallback.type = cbType;
+      }
+      console.log(cbContext, cbType, cbTransition);
+    },
+    handleCallbackAction() {
+      const cbActionType = this.intCallback.type;
+      this[cbActionType]();
+    },
+    slideNext() {
+      this.mainSwiper.unlockSwipes();
+      this.mainSwiper.slideNext(true, 0);
+      this.mainSwiper.lockSwipes();
+      this.topLevelOverlay = false;
+    },
+    // interaction callback options //
     getSlideIndex(sceneIndex, tierIndex) {
       const obj = {};
       obj[sceneIndex] = tierIndex;
@@ -263,10 +318,6 @@ export default {
     //      MainEventbus.$emit('interactive-slider-index', this.interactiveIndArr());
     //      // console.log('emitting interactive index', this.getInteractiveIndex());
     // },
-
-  },
-  watch: {
-
   },
   created() {
   },
@@ -400,10 +451,27 @@ export default {
 </script>
 
 <style lang="scss">
-.sliding-container {
+.main-slider-container {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.t-l-overlay--idle {
+  z-index: 10000;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+//  opacity: 1;
+}
+.fade-to-black-enter, .fade-to-black-leave-to {
+  opacity: 0;
+}
+
+.fade-to-black-enter-active, .fade-to-black-leave-active {
+  transition: opacity .8s linear;
+}
+.fade-to-black {
+  background-color: #000;
 }
 .main-slider {
   position: relative;
@@ -432,6 +500,4 @@ export default {
 
   }
 }
-
-
 </style>

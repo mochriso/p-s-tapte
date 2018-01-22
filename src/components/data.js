@@ -12,7 +12,7 @@ export default {
                   rows: [
                     { grow: 2,
                       panels: [
-                      { type: 'animated', effect: 'rotate', visible: true, position: '32% 30%', size: '212%' },
+                      { type: 'animated', effect: 'rotate-loop', visible: true, position: '32% 30%', size: '212%' },
                     ] },
                     { panels: [
                       { type: 'static', position: 'left top' },
@@ -32,17 +32,60 @@ export default {
                     ] },
                   ], // rows #2
                   }, // tier # 2
-                  { type: 'static',
+                  { type: 'interactive',
                     rows: [
-                      { panels: [
-                        { type: 'static', position: 'left top' },
-                      ] },
-                      { panels: [
-                        { type: 'static', position: 'left top' }, { type: 'static', position: 'center top' },
-                      ] },
-                      { panels: [
-                        { type: 'static', position: 'center top' },
-                      ] },
+                      { panels:
+                        [
+                          {
+                            type: 'static',
+                            position: 'left top',
+                          },
+                        ],
+                      },
+                      { panels:
+                        [
+                          {
+                            type: 'static',
+                            position: 'left top',
+                          },
+                          {
+                            type: 'static',
+                            position: 'center top',
+                          },
+                        ],
+                      },
+                      { panels:
+                        [
+                          {
+                            type: 'static',
+                            position: 'center top',
+                            interactionContext: true,
+                            interactionStep: 0,
+                          },
+                        ],
+                      },
+                    ],
+                    sequentialSteps: [
+                      { interaction:
+                            { gesture: 'swipe',
+                              mapping: 'viewport',
+                              animation: {
+                                animEvent: 'swipeInFlyOut',
+                                axis: 'X',
+                                direction: 'swiperDir',
+                                // callback: [
+                                //     {
+                                //     type: 'toggleSwapContextArt',
+                                //     timing: 'onIntSlideChange',
+                                //     context: 'panel',
+                                //   },
+                                // ],
+                              },
+                              interactionItem: {
+                                animAsset: 't02-r2-p0-int-el.jpg',
+                              },
+                            },
+                      },
                     ],
                   },
                 ], // tiers
@@ -110,7 +153,6 @@ export default {
                       position: 'center bottom',
                       interactionContext: true,
                       interactionStep: 0,
-
                     },
                   ] },
                   { panels: [
@@ -136,11 +178,14 @@ export default {
                             animation: {
                               animEvent: 'swipeInFlyOut',
                               axis: 'X',
-                              direction: 'opposite',
-                              callback: {
-                                type: 'toggleSwapContextArt',
-                                timing: 'onIntSlideChange',
-                              },
+                              direction: 'opposingDir',
+                              // callback: [
+                              //     {
+                              //     type: 'toggleSwapContextArt',
+                              //     timing: 'onIntSlideChange',
+                              //     context: 'panel',
+                              //   },
+                              // ],
                             },
                             interactionItem: {
                               animAsset: 't04-int_el0.png',
@@ -153,11 +198,7 @@ export default {
                           animation: {
                             animEvent: 'swipeInFlyOut',
                             axis: 'X',
-                            direction: 'normal',
-                            callback: {
-                              type: 'toggleSwapContextArt',
-                              timing: 'onIntSlideChange',
-                            },
+                            direction: 'swiperDir',
                           },
                           interactionItem: {
                             animAsset: 't04-int_el0.png',
@@ -170,11 +211,7 @@ export default {
                         animation: {
                           animEvent: 'swipeInFlyOut',
                           axis: 'X',
-                          direction: 'opposite',
-                          callback: {
-                            type: 'toggleSwapContextArt',
-                            timing: 'onIntSlideChange',
-                          },
+                          direction: 'opposingDir',
                         },
                         interactionItem: {
                           animAsset: 't04-int_el0.png',
@@ -199,13 +236,14 @@ export default {
                 { type: 'interactive',
                   rows: [
                     { panels: [
-                      { type: 'animated',
-                      effect: 'zoomoutonce',
-                      visible: true,
-                      position: '-73%, -72%',
+                      {
+                        type: 'animated',
+                        effect: 'zoom-out-loop',
+                        visible: true,
                      },
                     ] },
-                    { panels: [
+                    { grow: 2,
+                      panels: [
                       {
                         type: 'static',
                         position: 'center top',
@@ -221,15 +259,15 @@ export default {
                           animation: {
                             animEvent: 'swipeInFlyOut',
                             axis: 'X',
-                            direction: 'opposite',
+                            direction: 'opposingDir',
                             callback: [
                               {
-                                type: 'FadeToBlack',
-                                timing: 'onInteractionEnd',
-                              },
-                              {
-                                type: 'mainSlideNext',
-                                timing: 'onPrevCallbackEnd',
+                                timing: 'idleEnd',
+                                context: 'mainSlider',
+                                specs: {
+                                  type: 'slideNext',
+                                  transition: 'fade-to-black',
+                                },
                               },
                             ],
                           },

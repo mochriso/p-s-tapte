@@ -5,9 +5,9 @@
     <slot></slot>
     <template>
       <img
-      :class="panel.effect"
+      :class="[panel.effect, playPause]"
       :style="styler('img')"
-      :src="swapped ? swappedPanelArt :  panelArt"
+      :src="swapped ? swappedPanelArt : panelArt"
       :alt="this.panelName">
     </template>
   </div>
@@ -35,6 +35,8 @@ export default {
   props: ['intActiveIndex', 'panel', 'panelnr', 'panelName', 'type', 'panelArray', 'sceneNumber', 'mainActiveIndex', 'slideIndex'],
   data() {
     return {
+      isActiveIndex: false,
+      isAnimated: this.verifyAnimated(),
       swapped: false,
       coordinates: {
         objectHeight: '',
@@ -45,7 +47,10 @@ export default {
       styles: [
         {
           animated: {
-            img: { 'min-width': this.panel.size },
+            img: {
+              'min-width': this.panel.size,
+              'object-position': this.panel.position,
+            },
             wrap: { '': '' },
           },
         },
@@ -59,18 +64,38 @@ export default {
     };
   },
   computed: {
-
-  },
-  watch: {
-    mainActiveIndex(newVal) {
-      if (this.panel.interactionContext) {
-        if (this.slideIndex === newVal) {
-            this.setEmitCoordinates();
-        }
+    playPause() {
+      if (this.isAnimated) {
+        return {
+          'animation-running': this.isActiveIndex,
+          'animation-paused': !this.isActiveIndex,
+        };
       }
     },
   },
+  watch: {
+    mainActiveIndex: {
+      immediate: true,
+      handler(newVal) {
+        if (this.slideIndex === newVal) {
+          this.isActiveIndex = true;
+          if (this.panel.interactionContext) {
+              this.setEmitCoordinates();
+          }
+        }
+        else {
+          this.isActiveIndex = false;
+        }
+      },
+    },
+  },
   methods: {
+    verifyAnimated() {
+      if (this.panel.type === 'animated') {
+        return true;
+      }
+      return false;
+    },
     styler(part) {
       const returnArr = [];
       this.styles.forEach((obj) => {
@@ -97,7 +122,7 @@ export default {
     IntEventbus.$on('int-slide-change', (val, interactionIndex, SlideIndex) => {
       if (SlideIndex === this.slideIndex) {
         if (this.panel.interactionStep === interactionIndex) {
-          console.log('recieved int-slide-change', val, interactionIndex, SlideIndex);
+//      console.log('recieved int-slide-change', val, interactionIndex, SlideIndex);
           if (val === 'upToNext') {
             this.swapped = true;
           }
@@ -125,6 +150,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.panel {
+  transform-style: preserve-3d;
+//  transform: translate3d(0,0,0);
+  backface-visibility: hidden;
+  // transform: translateZ(0);
+}
 .static {
   img {
     min-width: 0%;
@@ -136,6 +167,10 @@ export default {
 }
 .animated {
   img {
+    will-change: transform;
+    transform: translate3d(0,0,0);
+  //  transform-style: preserve-3d;
+  //  backface-visibility: hidden;
     flex: 1 1 auto;
     align-items: center;
     width: 100%;
@@ -146,20 +181,46 @@ export default {
   //  align-items: stretch;
   }
   //--- SIMPLE PANEL ANIMS ---//
-  .rotate {
+  .rotate-loop {
     transition-property: transform;
-    animation-name: rotate;
+    animation-name: rotation;
     animation-duration: 100s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
   }
 
-  @keyframes rotate {
-    from { transform: translate(-32%, -30%)  rotate(0deg); }
-      to { transform: translate(-32%, -30%)  rotate(360deg); }
+  @keyframes rotation {
+    from { transform: translate(-32%, -30%) rotate(0deg); }
+      to { transform: translate(-32%, -30%) rotate(360deg); }
       // transform: translate(-32%, -30%)
       // scale(212%)
   }
-
+  .zoom-out-loop {
+    transition-property: transform;
+    animation-name: zoom-out;
+    animation-duration: 6s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+  }
+  .zoom-out-once {
+    transition-property: transform;
+    animation-name: zoom-out;
+    animation-duration: 6s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+  }
+  @keyframes zoom-out {
+    from { transform: translate(-0%, 70%)  scale(2.7, 2.7); }
+      to { transform: translate(-0%, 5%)  scale(0.6, 0.6); }
+      // transform: translate(-32%, -30%)
+      // scale(212%)
+  }
+  //--- PAUSE/RESUME ANIMATION (NOT TRANSITIONS!) ---//
+  .animation-paused {
+    animation-play-state: paused;
+  }
+  .animation-running {
+    animation-play-state: running;
+  }
 }
 </style>
